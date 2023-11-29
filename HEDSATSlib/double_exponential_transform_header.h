@@ -126,7 +126,7 @@ private:
             // an upper bound on the loop variable.
             if (currentDelta == 0.0)
                 break;
-            double r = log( currentDelta )/log( previousDelta );  // previousDelta != 0 or would have been kicked out previously
+            double r = std::log( currentDelta )/std::log( previousDelta );  // previousDelta != 0 or would have been kicked out previously
 
             if (r > 1.9 && r < 2.1)
             {

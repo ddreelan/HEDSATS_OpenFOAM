@@ -31,7 +31,7 @@
    Computes various error functions (erf, erfc, erfi, erfcx),
    including the Dawson integral, in the complex plane, based
    on algorithms for the computation of the Faddeeva function
-              w(z) = exp(-z^2) * erfc(-i*z).
+              w(z) = std::exp(-z^2) * erfc(-i*z).
    Given w(z), the error functions are mostly straightforward
    to compute, except for certain regions where we have to
    switch to Taylor expansions to avoid cancellation errors
@@ -74,7 +74,7 @@
    October 2012.
 
     -- Note that Algorithm 916 assumes that the erfc(x) function,
-       or rather the scaled function erfcx(x) = exp(x*x)*erfc(x),
+       or rather the scaled function erfcx(x) = std::exp(x*x)*erfc(x),
        is supplied for REAL arguments x.   I originally used an
        erfcx routine derived from DERFC in SLATEC, but I have
        since replaced it with a much faster routine written by
@@ -119,7 +119,7 @@
                        completely rewritten code by me, using a very
                        different algorithm which is much faster.
       30 October 2012: Implemented special-case code for real z
-                       (where real part is exp(-x^2) and imag part is
+                       (where real part is std::exp(-x^2) and imag part is
                         Dawson integral), using algorithm similar to erfx.
                        Export ImFaddeeva_w function to make Dawson's
                        integral directly accessible.
@@ -163,21 +163,25 @@
 #  include <cmath>
 #  include <limits>
 #include<iostream>
-using namespace std;
+#include <complex>
+
+// using namespace std;
 
 // use std::numeric_limits, since 1./0. and 0./0. fail with some compilers (MS)
 #  define Inf numeric_limits<double>::infinity()
 #  define NaN numeric_limits<double>::quiet_NaN()
 
-typedef complex<double> cmplx;
+typedef std::complex<double> cmplx;
 
 // Use C-like complex syntax, since the C syntax is more restrictive
-#  define cexp(z) exp(z)
+// #  define exp(z) std::exp(z)
+// #  define exp(z)  exp(z)
+
 #  define creal(z) real(z)
 #  define cimag(z) imag(z)
 #  define cpolar(r,t) polar(r,t)
 
-#  define C(a,b) cmplx(a,b)
+#  define c(a,b) cmplx(a,b)
 
 #  define FADDEEVA(name) Faddeeva::name
 #  define FADDEEVA_RE(name) Faddeeva::name
@@ -244,7 +248,7 @@ typedef double complex cmplx;
 #  endif
 
 #  ifdef CMPLX // C11
-#    define C(a,b) CMPLX(a,b)
+#    define c(a,b) CMPLX(a,b)
 #    define Inf INFINITY // C99 infinity
 #    ifdef NAN // GNU libc extension
 #      define NaN NAN
@@ -252,7 +256,7 @@ typedef double complex cmplx;
 #      define NaN (0./0.) // NaN
 #    endif
 #  else
-#    define C(a,b) ((a) + I*(b))
+#    define c(a,b) ((a) + I*(b))
 #    define Inf (1./0.)
 #    define NaN (0./0.)
 #  endif
@@ -262,7 +266,7 @@ static inline cmplx cpolar(double r, double t)
   if (r == 0.0 && !isnan(t))
     return 0.0;
   else
-    return C(r * cos(t), r * sin(t));
+    return c(r * std::cos(t), r * std::sin(t));
 }
 
 #endif // !__cplusplus, i.e. pure C (requires C99 features)
@@ -270,10 +274,10 @@ static inline cmplx cpolar(double r, double t)
 /////////////////////////////////////////////////////////////////////////
 // Auxiliary routines to compute other special functions based on w(z)
 
-// compute erfcx(z) = exp(z^2) erfz(z)
+// compute erfcx(z) = std::exp(z^2) erfz(z)
 cmplx FADDEEVA(erfcx)(cmplx z, double relerr)
 {
-  return FADDEEVA(w)(C(-cimag(z), creal(z)), relerr);
+  return FADDEEVA(w)(c(-cimag(z), creal(z)), relerr);
 }
 
 // compute the error function erf(x)
@@ -290,15 +294,15 @@ double FADDEEVA_RE(erf)(double x)
 
   if (x >= 0) {
     if (x < 8e-2) goto taylor;
-    return 1.0 - exp(mx2) * FADDEEVA_RE(erfcx)(x);
+    return 1.0 - std::exp(mx2) * FADDEEVA_RE(erfcx)(x);
   }
   else { // x < 0
     if (x > -8e-2) goto taylor;
-    return exp(mx2) * FADDEEVA_RE(erfcx)(-x) - 1.0;
+    return std::exp(mx2) * FADDEEVA_RE(erfcx)(-x) - 1.0;
   }
 
   // Use Taylor series for small |x|, to avoid cancellation inaccuracy
-  //   erf(x) = 2/sqrt(pi) * x * (1 - x^2/3 + x^4/10 - x^6/42 + x^8/216 + ...)
+  //   erf(x) = 2/std::sqrt(pi) * x * (1 - x^2/3 + x^4/10 - x^6/42 + x^8/216 + ...)
  taylor:
   return x * (1.1283791670955125739
               + mx2 * (0.37612638903183752464
@@ -314,15 +318,15 @@ cmplx FADDEEVA(erf)(cmplx z, double relerr)
   double x = creal(z), y = cimag(z);
 
   if (y == 0)
-    return C(FADDEEVA_RE(erf)(x),
+    return c(FADDEEVA_RE(erf)(x),
              y); // preserve sign of 0
   if (x == 0) // handle separately for speed & handling of y = Inf or NaN
-    return C(x, // preserve sign of 0
+    return c(x, // preserve sign of 0
              /* handle y -> Inf limit manually, since
-                exp(y^2) -> Inf but Im[w(y)] -> 0, so
+                std::exp(y^2) -> Inf but Im[w(y)] -> 0, so
                 IEEE will give us a NaN when it should be Inf */
              y*y > 720 ? (y > 0 ? Inf : -Inf)
-             : exp(y*y) * FADDEEVA(w_im)(y));
+             : std::exp(y*y) * FADDEEVA(w_im)(y));
 
   double mRe_z2 = (y - x) * (x + y); // Re(-z^2), being careful of overflow
   double mIm_z2 = -2*x*y; // Im(-z^2)
@@ -341,9 +345,9 @@ cmplx FADDEEVA(erf)(cmplx z, double relerr)
     }
     /* don't use complex exp function, since that will produce spurious NaN
        values when multiplying w in an overflow situation. */
-    return 1.0 - exp(mRe_z2) *
-      (C(cos(mIm_z2), sin(mIm_z2))
-       * FADDEEVA(w)(C(-y,x), relerr));
+    return 1.0 - std::exp(mRe_z2) *
+      (c(std::cos(mIm_z2), std::sin(mIm_z2))
+       * FADDEEVA(w)(c(-y,x), relerr));
   }
   else { // x < 0
     if (x > -8e-2) { // duplicate from above to avoid fabs(x) call
@@ -353,19 +357,19 @@ cmplx FADDEEVA(erf)(cmplx z, double relerr)
         goto taylor_erfi;
     }
     else if (isnan(x))
-      return C(NaN, y == 0 ? 0 : NaN);
+      return c(NaN, y == 0 ? 0 : NaN);
     /* don't use complex exp function, since that will produce spurious NaN
        values when multiplying w in an overflow situation. */
-    return exp(mRe_z2) *
-      (C(cos(mIm_z2), sin(mIm_z2))
-       * FADDEEVA(w)(C(y,-x), relerr)) - 1.0;
+    return std::exp(mRe_z2) *
+      (c(std::cos(mIm_z2), std::sin(mIm_z2))
+       * FADDEEVA(w)(c(y,-x), relerr)) - 1.0;
   }
 
   // Use Taylor series for small |z|, to avoid cancellation inaccuracy
-  //   erf(z) = 2/sqrt(pi) * z * (1 - z^2/3 + z^4/10 - z^6/42 + z^8/216 + ...)
+  //   erf(z) = 2/std::sqrt(pi) * z * (1 - z^2/3 + z^4/10 - z^6/42 + z^8/216 + ...)
  taylor:
   {
-    cmplx mz2 = C(mRe_z2, mIm_z2); // -z^2
+    cmplx mz2 = c(mRe_z2, mIm_z2); // -z^2
     return z * (1.1283791670955125739
                 + mz2 * (0.37612638903183752464
                          + mz2 * (0.11283791670955125739
@@ -376,17 +380,17 @@ cmplx FADDEEVA(erf)(cmplx z, double relerr)
   /* for small |x| and small |xy|,
      use Taylor series to avoid cancellation inaccuracy:
        erf(x+iy) = erf(iy)
-          + 2*exp(y^2)/sqrt(pi) *
+          + 2*std::exp(y^2)/std::sqrt(pi) *
             [ x * (1 - x^2 * (1+2y^2)/3 + x^4 * (3+12y^2+4y^4)/30 + ...
               - i * x^2 * y * (1 - x^2 * (3+2y^2)/6 + ...) ]
      where:
-        erf(iy) = exp(y^2) * Im[w(y)]
+        erf(iy) = std::exp(y^2) * Im[w(y)]
   */
  taylor_erfi:
   {
     double x2 = x*x, y2 = y*y;
-    double expy2 = exp(y2);
-    return C
+    double expy2 = std::exp(y2);
+    return c
       (expy2 * x * (1.1283791670955125739
                     - x2 * (0.37612638903183752464
                             + 0.75225277806367504925*y2)
@@ -403,15 +407,15 @@ cmplx FADDEEVA(erf)(cmplx z, double relerr)
 // erfi(z) = -i erf(iz)
 cmplx FADDEEVA(erfi)(cmplx z, double relerr)
 {
-  cmplx e = FADDEEVA(erf)(C(-cimag(z),creal(z)), relerr);
-  return C(cimag(e), -creal(e));
+  cmplx e = FADDEEVA(erf)(c(-cimag(z),creal(z)), relerr);
+  return c(cimag(e), -creal(e));
 }
 
 // erfi(x) = -i erf(ix)
 double FADDEEVA_RE(erfi)(double x)
 {
   return x*x > 720 ? (x > 0 ? Inf : -Inf)
-    : exp(x*x) * FADDEEVA(w_im)(x);
+    : std::exp(x*x) * FADDEEVA(w_im)(x);
 }
 
 // erfc(x) = 1 - erf(x)
@@ -424,8 +428,8 @@ double FADDEEVA_RE(erfc)(double x)
 #else
   if (x*x > 750) // underflow
     return (x >= 0 ? 0.0 : 2.0);
-  return x >= 0 ? exp(-x*x) * FADDEEVA_RE(erfcx)(x)
-    : 2. - exp(-x*x) * FADDEEVA_RE(erfcx)(-x);
+  return x >= 0 ? std::exp(-x*x) * FADDEEVA_RE(erfcx)(x)
+    : 2. - std::exp(-x*x) * FADDEEVA_RE(erfcx)(-x);
 #endif
 }
 
@@ -435,18 +439,18 @@ cmplx FADDEEVA(erfc)(cmplx z, double relerr)
   double x = creal(z), y = cimag(z);
 
   if (x == 0.)
-    return C(1,
+    return c(1,
              /* handle y -> Inf limit manually, since
-                exp(y^2) -> Inf but Im[w(y)] -> 0, so
+                std::exp(y^2) -> Inf but Im[w(y)] -> 0, so
                 IEEE will give us a NaN when it should be Inf */
              y*y > 720 ? (y > 0 ? -Inf : Inf)
-             : -exp(y*y) * FADDEEVA(w_im)(y));
+             : -std::exp(y*y) * FADDEEVA(w_im)(y));
   if (y == 0.) {
     if (x*x > 750) // underflow
-      return C(x >= 0 ? 0.0 : 2.0,
+      return c(x >= 0 ? 0.0 : 2.0,
                -y); // preserve sign of 0
-    return C(x >= 0 ? exp(-x*x) * FADDEEVA_RE(erfcx)(x)
-             : 2. - exp(-x*x) * FADDEEVA_RE(erfcx)(-x),
+    return c(x >= 0 ? std::exp(-x*x) * FADDEEVA_RE(erfcx)(x)
+             : 2. - std::exp(-x*x) * FADDEEVA_RE(erfcx)(-x),
              -y); // preserve sign of zero
   }
 
@@ -456,47 +460,47 @@ cmplx FADDEEVA(erfc)(cmplx z, double relerr)
     return (x >= 0 ? 0.0 : 2.0);
 
   if (x >= 0)
-    return cexp(C(mRe_z2, mIm_z2))
-      * FADDEEVA(w)(C(-y,x), relerr);
+    return exp(c(mRe_z2, mIm_z2))
+      * FADDEEVA(w)(c(-y,x), relerr);
   else
-    return 2.0 - cexp(C(mRe_z2, mIm_z2))
-      * FADDEEVA(w)(C(y,-x), relerr);
+    return 2.0 - exp(c(mRe_z2, mIm_z2))
+      * FADDEEVA(w)(c(y,-x), relerr);
 }
 
-// compute Dawson(x) = sqrt(pi)/2  *  exp(-x^2) * erfi(x)
+// compute Dawson(x) = std::sqrt(pi)/2  *  std::exp(-x^2) * erfi(x)
 double FADDEEVA_RE(Dawson)(double x)
 {
-  const double spi2 = 0.8862269254527580136490837416705725913990; // sqrt(pi)/2
+  const double spi2 = 0.8862269254527580136490837416705725913990; // std::sqrt(pi)/2
   return spi2 * FADDEEVA(w_im)(x);
 }
 
-// compute Dawson(z) = sqrt(pi)/2  *  exp(-z^2) * erfi(z)
+// compute Dawson(z) = std::sqrt(pi)/2  *  std::exp(-z^2) * erfi(z)
 cmplx FADDEEVA(Dawson)(cmplx z, double relerr)
 {
-  const double spi2 = 0.8862269254527580136490837416705725913990; // sqrt(pi)/2
+  const double spi2 = 0.8862269254527580136490837416705725913990; // std::sqrt(pi)/2
   double x = creal(z), y = cimag(z);
 
   // handle axes separately for speed & proper handling of x or y = Inf or NaN
   if (y == 0)
-    return C(spi2 * FADDEEVA(w_im)(x),
+    return c(spi2 * FADDEEVA(w_im)(x),
              -y); // preserve sign of 0
   if (x == 0) {
     double y2 = y*y;
     if (y2 < 2.5e-5) { // Taylor expansion
-      return C(x, // preserve sign of 0
+      return c(x, // preserve sign of 0
                y * (1.
                     + y2 * (0.6666666666666666666666666666666666666667
                             + y2 * 0.26666666666666666666666666666666666667)));
     }
-    return C(x, // preserve sign of 0
+    return c(x, // preserve sign of 0
              spi2 * (y >= 0
-                     ? exp(y2) - FADDEEVA_RE(erfcx)(y)
-                     : FADDEEVA_RE(erfcx)(-y) - exp(y2)));
+                     ? std::exp(y2) - FADDEEVA_RE(erfcx)(y)
+                     : FADDEEVA_RE(erfcx)(-y) - std::exp(y2)));
   }
 
   double mRe_z2 = (y - x) * (x + y); // Re(-z^2), being careful of overflow
   double mIm_z2 = -2*x*y; // Im(-z^2)
-  cmplx mz2 = C(mRe_z2, mIm_z2); // -z^2
+  cmplx mz2 = c(mRe_z2, mIm_z2); // -z^2
 
   /* Handle positive and negative x via different formulas,
      using the mirror symmetries of w, to avoid overflow/underflow
@@ -508,8 +512,8 @@ cmplx FADDEEVA(Dawson)(cmplx z, double relerr)
       else if (fabs(mIm_z2) < 5e-3)
         goto taylor_realaxis;
     }
-    cmplx res = cexp(mz2) - FADDEEVA(w)(z, relerr);
-    return spi2 * C(-cimag(res), creal(res));
+    cmplx res = exp(mz2) - FADDEEVA(w)(z, relerr);
+    return spi2 * c(-cimag(res), creal(res));
   }
   else { // y < 0
     if (y > -5e-3) { // duplicate from above to avoid fabs(x) call
@@ -519,9 +523,9 @@ cmplx FADDEEVA(Dawson)(cmplx z, double relerr)
         goto taylor_realaxis;
     }
     else if (isnan(y))
-      return C(x == 0 ? 0 : NaN, NaN);
-    cmplx res = FADDEEVA(w)(-z, relerr) - cexp(mz2);
-    return spi2 * C(-cimag(res), creal(res));
+      return c(x == 0 ? 0 : NaN, NaN);
+    cmplx res = FADDEEVA(w)(-z, relerr) - exp(mz2);
+    return spi2 * c(-cimag(res), creal(res));
   }
 
   // Use Taylor series for small |z|, to avoid cancellation inaccuracy
@@ -571,7 +575,7 @@ cmplx FADDEEVA(Dawson)(cmplx z, double relerr)
       double y2 = y*y;
       if (x2 > 25e14) {// |x| > 5e7
         double xy2 = (x*y)*(x*y);
-        return C((0.5 + y2 * (0.5 + 0.25*y2
+        return c((0.5 + y2 * (0.5 + 0.25*y2
                               - 0.16666666666666666667*xy2)) / x,
                  y * (-1 + y2 * (-0.66666666666666666667
                                  + 0.13333333333333333333*xy2
@@ -579,7 +583,7 @@ cmplx FADDEEVA(Dawson)(cmplx z, double relerr)
                  / (2*x2 - 1));
       }
       return (1. / (-15 + x2*(90 + x2*(-60 + 8*x2)))) *
-        C(x * (33 + x2 * (-28 + 4*x2)
+        c(x * (33 + x2 * (-28 + 4*x2)
                + y2 * (18 - 4*x2 + 4*y2)),
           y * (-15 + x2 * (24 - 4*x2)
                + y2 * (4*x2 - 10 - 4*y2)));
@@ -587,7 +591,7 @@ cmplx FADDEEVA(Dawson)(cmplx z, double relerr)
     else {
       double D = spi2 * FADDEEVA(w_im)(x);
       double y2 = y*y;
-      return C
+      return c
         (D + y2 * (D + x - 2*D*x2)
          + y2*y2 * (D * (0.5 - x2 * (2 - 0.66666666666666666667*x2))
                     + x * (0.83333333333333333333
@@ -604,8 +608,8 @@ cmplx FADDEEVA(Dawson)(cmplx z, double relerr)
 
 /////////////////////////////////////////////////////////////////////////
 
-// return sinc(x) = sin(x)/x, given both x and sin(x)
-// [since we only use this in cases where sin(x) has already been computed]
+// return sinc(x) = std::sin(x)/x, given both x and std::sin(x)
+// [since we only use this in cases where std::sin(x) has already been computed]
 static inline double sinc(double x, double sinx) {
   return fabs(x) < 1e-4 ? 1 - (0.1666666666666666666667)*x*x : sinx / x;
 }
@@ -616,9 +620,9 @@ static inline double sinh_taylor(double x) {
                            + 0.00833333333333333333333 * (x*x)));
 }
 
-static inline double sqr(double x) { return x*x; }
+static inline double sqr2(double x) { return x*x; }
 
-// precomputed table of expa2n2[n-1] = exp(-a2*n*n)
+// precomputed table of expa2n2[n-1] = std::exp(-a2*n*n)
 // for double-precision a2 = 0.26865... in FADDEEVA(w), below.
 static const double expa2n2[] = {
   7.64405281671221563e-01,
@@ -680,23 +684,23 @@ static const double expa2n2[] = {
 cmplx FADDEEVA(w)(cmplx z, double relerr)
 {
   if (creal(z) == 0.0)
-    return C(FADDEEVA_RE(erfcx)(cimag(z)),
+    return c(FADDEEVA_RE(erfcx)(cimag(z)),
              creal(z)); // give correct sign of 0 in cimag(w)
   else if (cimag(z) == 0)
-    return C(exp(-sqr(creal(z))),
+    return c(std::exp(-sqr2(creal(z))),
              FADDEEVA(w_im)(creal(z)));
 
   double a, a2, c;
   if (relerr <= DBL_EPSILON) {
     relerr = DBL_EPSILON;
-    a = 0.518321480430085929872; // pi / sqrt(-log(eps*0.5))
+    a = 0.518321480430085929872; // pi / std::sqrt(-std::std::log(eps*0.5))
     c = 0.329973702884629072537; // (2/pi) * a;
     a2 = 0.268657157075235951582; // a^2
   }
   else {
     const double pi = 3.14159265358979323846264338327950288419716939937510582;
     if (relerr > 0.1) relerr = 0.1; // not sensible to compute < 1 digit
-    a = pi / sqrt(-log(relerr*0.5));
+    a = pi / std::sqrt(-std::log(relerr*0.5));
     c = (2/pi)*a;
     a2 = a*a;
   }
@@ -719,7 +723,7 @@ cmplx FADDEEVA(w)(cmplx z, double relerr)
 
     /* Poppe & Wijers suggest using a number of terms
            nu = 3 + 1442 / (26*rho + 77)
-       where rho = sqrt((x/x0)^2 + (y/y0)^2) where x0=6.3, y0=4.4.
+       where rho = std::sqrt((x/x0)^2 + (y/y0)^2) where x0=6.3, y0=4.4.
        (They only use this expansion for rho >= 1, but rho a little less
         than 1 seems okay too.)
        Instead, I did my own fit to a slightly different function
@@ -727,29 +731,29 @@ cmplx FADDEEVA(w)(cmplx z, double relerr)
        the sum of the squares of the errors in nu with the constraint
        that the estimated nu be >= minimum nu to attain machine precision.
        I also separate the regions where nu == 2 and nu == 1. */
-    const double ispi = 0.56418958354775628694807945156; // 1 / sqrt(pi)
+    const double ispi = 0.56418958354775628694807945156; // 1 / std::sqrt(pi)
     double xs = y < 0 ? -creal(z) : creal(z); // compute for -z if y < 0
     if (x + ya > 4000) { // nu <= 2
-      if (x + ya > 1e7) { // nu == 1, w(z) = i/sqrt(pi) / z
+      if (x + ya > 1e7) { // nu == 1, w(z) = i/std::sqrt(pi) / z
         // scale to avoid overflow
         if (x > ya) {
           double yax = ya / xs;
           double denom = ispi / (xs + yax*ya);
-          ret = C(denom*yax, denom);
+          ret = c(denom*yax, denom);
         }
         else if (isinf(ya))
           return ((isnan(x) || y < 0)
-                  ? C(NaN,NaN) : C(0,0));
+                  ? c(NaN,NaN) : c(0,0));
         else {
           double xya = xs / ya;
           double denom = ispi / (xya*xs + ya);
-          ret = C(denom, denom*xya);
+          ret = c(denom, denom*xya);
         }
       }
-      else { // nu == 2, w(z) = i/sqrt(pi) * z / (z*z - 0.5)
+      else { // nu == 2, w(z) = i/std::sqrt(pi) * z / (z*z - 0.5)
         double dr = xs*xs - ya*ya - 0.5, di = 2*xs*ya;
         double denom = ispi / (dr*dr + di*di);
-        ret = C(denom * (xs*di-ya*dr), denom * (xs*dr+ya*di));
+        ret = c(denom * (xs*di-ya*dr), denom * (xs*dr+ya*di));
       }
     }
     else { // compute nu(z) estimate and do general continued fraction
@@ -762,40 +766,40 @@ cmplx FADDEEVA(w)(cmplx z, double relerr)
         wr = xs - wr * denom;
         wi = ya + wi * denom;
       }
-      { // w(z) = i/sqrt(pi) / w:
+      { // w(z) = i/std::sqrt(pi) / w:
         double denom = ispi / (wr*wr + wi*wi);
-        ret = C(denom*wi, denom*wr);
+        ret = c(denom*wi, denom*wr);
       }
     }
     if (y < 0) {
-      // use w(z) = 2.0*exp(-z*z) - w(-z),
-      // but be careful of overflow in exp(-z*z)
-      //                                = exp(-(xs*xs-ya*ya) -2*i*xs*ya)
-      return 2.0*cexp(C((ya-xs)*(xs+ya), 2*xs*y)) - ret;
+      // use w(z) = 2.0*std::exp(-z*z) - w(-z),
+      // but be careful of overflow in std::exp(-z*z)
+      //                                = std::exp(-(xs*xs-ya*ya) -2*i*xs*ya)
+      return 2.0*exp(c((ya-xs)*(xs+ya), 2*xs*y)) - ret;
     }
     else
       return ret;
   }
 #else // !USE_CONTINUED_FRACTION
-  if (x + ya > 1e7) { // w(z) = i/sqrt(pi) / z, to machine precision
-    const double ispi = 0.56418958354775628694807945156; // 1 / sqrt(pi)
+  if (x + ya > 1e7) { // w(z) = i/std::sqrt(pi) / z, to machine precision
+    const double ispi = 0.56418958354775628694807945156; // 1 / std::sqrt(pi)
     double xs = y < 0 ? -creal(z) : creal(z); // compute for -z if y < 0
     // scale to avoid overflow
     if (x > ya) {
       double yax = ya / xs;
       double denom = ispi / (xs + yax*ya);
-      ret = C(denom*yax, denom);
+      ret = c(denom*yax, denom);
     }
     else {
       double xya = xs / ya;
       double denom = ispi / (xya*xs + ya);
-      ret = C(denom, denom*xya);
+      ret = c(denom, denom*xya);
     }
     if (y < 0) {
-      // use w(z) = 2.0*exp(-z*z) - w(-z),
-      // but be careful of overflow in exp(-z*z)
-      //                                = exp(-(xs*xs-ya*ya) -2*i*xs*ya)
-      return 2.0*cexp(C((ya-xs)*(xs+ya), 2*xs*y)) - ret;
+      // use w(z) = 2.0*std::exp(-z*z) - w(-z),
+      // but be careful of overflow in std::exp(-z*z)
+      //                                = std::exp(-(xs*xs-ya*ya) -2*i*xs*ya)
+      return 2.0*exp(c((ya-xs)*(xs+ya), 2*xs*y)) - ret;
     }
     else
       return ret;
@@ -803,7 +807,7 @@ cmplx FADDEEVA(w)(cmplx z, double relerr)
 #endif // !USE_CONTINUED_FRACTION
 
   /* Note: The test that seems to be suggested in the paper is x <
-     sqrt(-log(DBL_MIN)), about 26.6, since otherwise exp(-x^2)
+     std::sqrt(-std::log(DBL_MIN)), about 26.6, since otherwise std::exp(-x^2)
      underflows to zero and sum1,sum2,sum4 are zero.  However, long
      before this occurs, the sum1,sum2,sum4 contributions are
      negligible in double precision; I find that this happens for x >
@@ -819,17 +823,17 @@ cmplx FADDEEVA(w)(cmplx z, double relerr)
     double expx2;
 
     if (isnan(y))
-      return C(y,y);
+      return c(y,y);
 
     /* Somewhat ugly copy-and-paste duplication here, but I see significant
        speedups from using the special-case code with the precomputed
        exponential, and the x < 5e-4 special case is needed for accuracy. */
 
-    if (relerr == DBL_EPSILON) { // use precomputed exp(-a2*(n*n)) table
+    if (relerr == DBL_EPSILON) { // use precomputed std::exp(-a2*(n*n)) table
       if (x < 5e-4) { // compute sum4 and sum5 together as sum5-sum4
         const double x2 = x*x;
-        expx2 = 1 - x2 * (1 - 0.5*x2); // exp(-x*x) via Taylor
-        // compute exp(2*a*x) and exp(-2*a*x) via Taylor, to double precision
+        expx2 = 1 - x2 * (1 - 0.5*x2); // std::exp(-x*x) via Taylor
+        // compute std::exp(2*a*x) and std::exp(-2*a*x) via Taylor, to double precision
         const double ax2 = 1.036642960860171859744*x; // 2*a*x
         const double exp2ax =
           1 + ax2 * (1 + ax2 * (0.5 + 0.166666666666666666667*ax2));
@@ -851,8 +855,8 @@ cmplx FADDEEVA(w)(cmplx z, double relerr)
         }
       }
       else { // x > 5e-4, compute sum4 and sum5 separately
-        expx2 = exp(-x*x);
-        const double exp2ax = exp((2*a)*x), expm2ax = 1 / exp2ax;
+        expx2 = std::exp(-x*x);
+        const double exp2ax = std::exp((2*a)*x), expm2ax = 1 / exp2ax;
         for (int n = 1; 1; ++n) {
           const double coef = expa2n2[n-1] * expx2 / (a2*(n*n) + y*y);
           prod2ax *= exp2ax;
@@ -867,13 +871,13 @@ cmplx FADDEEVA(w)(cmplx z, double relerr)
         }
       }
     }
-    else { // relerr != DBL_EPSILON, compute exp(-a2*(n*n)) on the fly
-      const double exp2ax = exp((2*a)*x), expm2ax = 1 / exp2ax;
+    else { // relerr != DBL_EPSILON, compute std::exp(-a2*(n*n)) on the fly
+      const double exp2ax = std::exp((2*a)*x), expm2ax = 1 / exp2ax;
       if (x < 5e-4) { // compute sum4 and sum5 together as sum5-sum4
         const double x2 = x*x;
-        expx2 = 1 - x2 * (1 - 0.5*x2); // exp(-x*x) via Taylor
+        expx2 = 1 - x2 * (1 - 0.5*x2); // std::exp(-x*x) via Taylor
         for (int n = 1; 1; ++n) {
-          const double coef = exp(-a2*(n*n)) * expx2 / (a2*(n*n) + y*y);
+          const double coef = std::exp(-a2*(n*n)) * expx2 / (a2*(n*n) + y*y);
           prod2ax *= exp2ax;
           prodm2ax *= expm2ax;
           sum1 += coef;
@@ -888,9 +892,9 @@ cmplx FADDEEVA(w)(cmplx z, double relerr)
         }
       }
       else { // x > 5e-4, compute sum4 and sum5 separately
-        expx2 = exp(-x*x);
+        expx2 = std::exp(-x*x);
         for (int n = 1; 1; ++n) {
-          const double coef = exp(-a2*(n*n)) * expx2 / (a2*(n*n) + y*y);
+          const double coef = std::exp(-a2*(n*n)) * expx2 / (a2*(n*n) + y*y);
           prod2ax *= exp2ax;
           prodm2ax *= expm2ax;
           sum1 += coef;
@@ -904,53 +908,53 @@ cmplx FADDEEVA(w)(cmplx z, double relerr)
       }
     }
     const double expx2erfcxy = // avoid spurious overflow for large negative y
-      y > -6 // for y < -6, erfcx(y) = 2*exp(y*y) to double precision
-      ? expx2*FADDEEVA_RE(erfcx)(y) : 2*exp(y*y-x*x);
+      y > -6 // for y < -6, erfcx(y) = 2*std::exp(y*y) to double precision
+      ? expx2*FADDEEVA_RE(erfcx)(y) : 2*std::exp(y*y-x*x);
     if (y > 5) { // imaginary terms cancel
-      const double sinxy = sin(x*y);
-      ret = (expx2erfcxy - c*y*sum1) * cos(2*x*y)
+      const double sinxy = std::sin(x*y);
+      ret = (expx2erfcxy - c*y*sum1) * std::cos(2*x*y)
         + (c*x*expx2) * sinxy * sinc(x*y, sinxy);
     }
     else {
       double xs = creal(z);
-      const double sinxy = sin(xs*y);
-      const double sin2xy = sin(2*xs*y), cos2xy = cos(2*xs*y);
+      const double sinxy = std::sin(xs*y);
+      const double sin2xy = std::sin(2*xs*y), cos2xy = std::cos(2*xs*y);
       const double coef1 = expx2erfcxy - c*y*sum1;
       const double coef2 = c*xs*expx2;
-      ret = C(coef1 * cos2xy + coef2 * sinxy * sinc(xs*y, sinxy),
+      ret = c(coef1 * cos2xy + coef2 * sinxy * sinc(xs*y, sinxy),
               coef2 * sinc(2*xs*y, sin2xy) - coef1 * sin2xy);
     }
   }
   else { // x large: only sum3 & sum5 contribute (see above note)
     if (isnan(x))
-      return C(x,x);
+      return c(x,x);
     if (isnan(y))
-      return C(y,y);
+      return c(y,y);
 
 #if USE_CONTINUED_FRACTION
-    ret = exp(-x*x); // |y| < 1e-10, so we only need exp(-x*x) term
+    ret = std::exp(-x*x); // |y| < 1e-10, so we only need std::exp(-x*x) term
 #else
     if (y < 0) {
-      /* erfcx(y) ~ 2*exp(y*y) + (< 1) if y < 0, so
-         erfcx(y)*exp(-x*x) ~ 2*exp(y*y-x*x) term may not be negligible
+      /* erfcx(y) ~ 2*std::exp(y*y) + (< 1) if y < 0, so
+         erfcx(y)*std::exp(-x*x) ~ 2*std::exp(y*y-x*x) term may not be negligible
          if y*y - x*x > -36 or so.  So, compute this term just in case.
-         We also need the -exp(-x*x) term to compute Re[w] accurately
+         We also need the -std::exp(-x*x) term to compute Re[w] accurately
          in the case where y is very small. */
-      ret = cpolar(2*exp(y*y-x*x) - exp(-x*x), -2*creal(z)*y);
+      ret = cpolar(2*std::exp(y*y-x*x) - std::exp(-x*x), -2*creal(z)*y);
     }
     else
-      ret = exp(-x*x); // not negligible in real part if y very small
+      ret = std::exp(-x*x); // not negligible in real part if y very small
 #endif
     // (round instead of ceil as in original paper; note that x/a > 1 here)
     double n0 = floor(x/a + 0.5); // sum in both directions, starting at n0
     double dx = a*n0 - x;
-    sum3 = exp(-dx*dx) / (a2*(n0*n0) + y*y);
+    sum3 = std::exp(-dx*dx) / (a2*(n0*n0) + y*y);
     sum5 = a*n0 * sum3;
-    double exp1 = exp(4*a*dx), exp1dn = 1;
+    double exp1 = std::exp(4*a*dx), exp1dn = 1;
     int dn;
     for (dn = 1; n0 - dn > 0; ++dn) { // loop over n0-dn and n0+dn terms
       double np = n0 + dn, nm = n0 - dn;
-      double tp = exp(-sqr(a*dn+dx));
+      double tp = std::exp(-sqr2(a*dn+dx));
       double tm = tp * (exp1dn *= exp1); // trick to get tm from tp
       tp /= (a2*(np*np) + y*y);
       tm /= (a2*(nm*nm) + y*y);
@@ -960,20 +964,20 @@ cmplx FADDEEVA(w)(cmplx z, double relerr)
     }
     while (1) { // loop over n0+dn terms only (since n0-dn <= 0)
       double np = n0 + dn++;
-      double tp = exp(-sqr(a*dn+dx)) / (a2*(np*np) + y*y);
+      double tp = std::exp(-sqr2(a*dn+dx)) / (a2*(np*np) + y*y);
       sum3 += tp;
       sum5 += a * np * tp;
       if (a * np * tp < relerr * sum5) goto finish;
     }
   }
  finish:
-  return ret + C((0.5*c)*y*(sum2+sum3),
+  return ret + c((0.5*c)*y*(sum2+sum3),
                  (0.5*c)*copysign(sum5-sum4, creal(z)));
 }
 
 /////////////////////////////////////////////////////////////////////////
 
-/* erfcx(x) = exp(x^2) erfc(x) function, for real x, written by
+/* erfcx(x) = std::exp(x^2) erfc(x) function, for real x, written by
    Steven G. Johnson, October 2012.
 
    This function combines a few different ideas.
@@ -995,7 +999,7 @@ cmplx FADDEEVA(w)(cmplx z, double relerr)
          degree Chebyshev polynomials in each subinterval. This greatly
          improves performance in my tests.
 
-   For x < 0, we use the relationship erfcx(-x) = 2 exp(x^2) - erfc(x),
+   For x < 0, we use the relationship erfcx(-x) = 2 std::exp(x^2) - erfc(x),
    with the usual checks for overflow etcetera.
 
    Performance-wise, it seems to be substantially faster than either
@@ -1423,7 +1427,7 @@ double FADDEEVA_RE(erfcx)(double x)
 {
   if (x >= 0) {
     if (x > 50) { // continued-fraction expansion is faster
-      const double ispi = 0.56418958354775628694807945156; // 1 / sqrt(pi)
+      const double ispi = 0.56418958354775628694807945156; // 1 / std::sqrt(pi)
       if (x > 5e7) // 1-term expansion, important to avoid overflow
         return ispi / x;
       /* 5-term expansion (rely on compiler for CSE), simplified from:
@@ -1433,13 +1437,13 @@ double FADDEEVA_RE(erfcx)(double x)
     return erfcx_y100(400/(4+x));
   }
   else
-    return x < -26.7 ? HUGE_VAL : (x < -6.1 ? 2*exp(x*x)
-                                   : 2*exp(x*x) - erfcx_y100(400/(4-x)));
+    return x < -26.7 ? HUGE_VAL : (x < -6.1 ? 2*std::exp(x*x)
+                                   : 2*std::exp(x*x) - erfcx_y100(400/(4-x)));
 }
 
 /////////////////////////////////////////////////////////////////////////
 /* Compute a scaled Dawson integral
-            FADDEEVA(w_im)(x) = 2*Dawson(x)/sqrt(pi)
+            FADDEEVA(w_im)(x) = 2*Dawson(x)/std::sqrt(pi)
    equivalent to the imaginary part w(x) for real x.
 
    Uses methods similar to the erfcx calculation above: continued fractions
@@ -1847,7 +1851,7 @@ static double w_im_y100(double y100, double x) {
     }
   case 97: case 98:
   case 99: case 100: { // use Taylor expansion for small x (|x| <= 0.0309...)
-      //  (2/sqrt(pi)) * (x - 2/3 x^3  + 4/15 x^5  - 8/105 x^7 + 16/945 x^9)
+      //  (2/std::sqrt(pi)) * (x - 2/3 x^3  + 4/15 x^5  - 8/105 x^7 + 16/945 x^9)
       double x2 = x*x;
       return x * (1.1283791670955125739
                   - x2 * (0.75225277806367504925
@@ -1865,7 +1869,7 @@ double FADDEEVA(w_im)(double x)
 {
   if (x >= 0) {
     if (x > 45) { // continued-fraction expansion is faster
-      const double ispi = 0.56418958354775628694807945156; // 1 / sqrt(pi)
+      const double ispi = 0.56418958354775628694807945156; // 1 / std::sqrt(pi)
       if (x > 5e7) // 1-term expansion, important to avoid overflow
         return ispi / x;
       /* 5-term expansion (rely on compiler for CSE), simplified from:
@@ -1876,7 +1880,7 @@ double FADDEEVA(w_im)(double x)
   }
   else { // = -FADDEEVA(w_im)(-x)
     if (x < -45) { // continued-fraction expansion is faster
-      const double ispi = 0.56418958354775628694807945156; // 1 / sqrt(pi)
+      const double ispi = 0.56418958354775628694807945156; // 1 / std::sqrt(pi)
       if (x < -5e7) // 1-term expansion, important to avoid overflow
         return ispi / x;
       /* 5-term expansion (rely on compiler for CSE), simplified from:
@@ -1929,63 +1933,63 @@ int main(void) {
     printf("############# w(z) tests #############\n");
 #define NTST 57 // define instead of const for C compatibility
     cmplx z[NTST] = {
-      C(624.2,-0.26123),
-      C(-0.4,3.),
-      C(0.6,2.),
-      C(-1.,1.),
-      C(-1.,-9.),
-      C(-1.,9.),
-      C(-0.0000000234545,1.1234),
-      C(-3.,5.1),
-      C(-53,30.1),
-      C(0.0,0.12345),
-      C(11,1),
-      C(-22,-2),
-      C(9,-28),
-      C(21,-33),
-      C(1e5,1e5),
-      C(1e14,1e14),
-      C(-3001,-1000),
-      C(1e160,-1e159),
-      C(-6.01,0.01),
-      C(-0.7,-0.7),
-      C(2.611780000000000e+01, 4.540909610972489e+03),
-      C(0.8e7,0.3e7),
-      C(-20,-19.8081),
-      C(1e-16,-1.1e-16),
-      C(2.3e-8,1.3e-8),
-      C(6.3,-1e-13),
-      C(6.3,1e-20),
-      C(1e-20,6.3),
-      C(1e-20,16.3),
-      C(9,1e-300),
-      C(6.01,0.11),
-      C(8.01,1.01e-10),
-      C(28.01,1e-300),
-      C(10.01,1e-200),
-      C(10.01,-1e-200),
-      C(10.01,0.99e-10),
-      C(10.01,-0.99e-10),
-      C(1e-20,7.01),
-      C(-1,7.01),
-      C(5.99,7.01),
-      C(1,0),
-      C(55,0),
-      C(-0.1,0),
-      C(1e-20,0),
-      C(0,5e-14),
-      C(0,51),
-      C(Inf,0),
-      C(-Inf,0),
-      C(0,Inf),
-      C(0,-Inf),
-      C(Inf,Inf),
-      C(Inf,-Inf),
-      C(NaN,NaN),
-      C(NaN,0),
-      C(0,NaN),
-      C(NaN,Inf),
-      C(Inf,NaN)
+      c(624.2,-0.26123),
+      c(-0.4,3.),
+      c(0.6,2.),
+      c(-1.,1.),
+      c(-1.,-9.),
+      c(-1.,9.),
+      c(-0.0000000234545,1.1234),
+      c(-3.,5.1),
+      c(-53,30.1),
+      c(0.0,0.12345),
+      c(11,1),
+      c(-22,-2),
+      c(9,-28),
+      c(21,-33),
+      c(1e5,1e5),
+      c(1e14,1e14),
+      c(-3001,-1000),
+      c(1e160,-1e159),
+      c(-6.01,0.01),
+      c(-0.7,-0.7),
+      c(2.611780000000000e+01, 4.540909610972489e+03),
+      c(0.8e7,0.3e7),
+      c(-20,-19.8081),
+      c(1e-16,-1.1e-16),
+      c(2.3e-8,1.3e-8),
+      c(6.3,-1e-13),
+      c(6.3,1e-20),
+      c(1e-20,6.3),
+      c(1e-20,16.3),
+      c(9,1e-300),
+      c(6.01,0.11),
+      c(8.01,1.01e-10),
+      c(28.01,1e-300),
+      c(10.01,1e-200),
+      c(10.01,-1e-200),
+      c(10.01,0.99e-10),
+      c(10.01,-0.99e-10),
+      c(1e-20,7.01),
+      c(-1,7.01),
+      c(5.99,7.01),
+      c(1,0),
+      c(55,0),
+      c(-0.1,0),
+      c(1e-20,0),
+      c(0,5e-14),
+      c(0,51),
+      c(Inf,0),
+      c(-Inf,0),
+      c(0,Inf),
+      c(0,-Inf),
+      c(Inf,Inf),
+      c(Inf,-Inf),
+      c(NaN,NaN),
+      c(NaN,0),
+      c(0,NaN),
+      c(NaN,Inf),
+      c(Inf,NaN)
     };
     cmplx w[NTST] = { /* w(z), computed with WolframAlpha
                                    ... note that WolframAlpha is problematic
@@ -1993,109 +1997,109 @@ int main(void) {
                                    use the continued-fraction expansion
                                    in WolframAlpha in some cases, or switch
                                    to Maple */
-      C(-3.78270245518980507452677445620103199303131110e-7,
+      c(-3.78270245518980507452677445620103199303131110e-7,
         0.000903861276433172057331093754199933411710053155),
-      C(0.1764906227004816847297495349730234591778719532788,
+      c(0.1764906227004816847297495349730234591778719532788,
         -0.02146550539468457616788719893991501311573031095617),
-      C(0.2410250715772692146133539023007113781272362309451,
+      c(0.2410250715772692146133539023007113781272362309451,
         0.06087579663428089745895459735240964093522265589350),
-      C(0.30474420525691259245713884106959496013413834051768,
+      c(0.30474420525691259245713884106959496013413834051768,
         -0.20821893820283162728743734725471561394145872072738),
-      C(7.317131068972378096865595229600561710140617977e34,
+      c(7.317131068972378096865595229600561710140617977e34,
         8.321873499714402777186848353320412813066170427e34),
-      C(0.0615698507236323685519612934241429530190806818395,
+      c(0.0615698507236323685519612934241429530190806818395,
         -0.00676005783716575013073036218018565206070072304635),
-      C(0.3960793007699874918961319170187598400134746631,
+      c(0.3960793007699874918961319170187598400134746631,
         -5.593152259116644920546186222529802777409274656e-9),
-      C(0.08217199226739447943295069917990417630675021771804,
+      c(0.08217199226739447943295069917990417630675021771804,
         -0.04701291087643609891018366143118110965272615832184),
-      C(0.00457246000350281640952328010227885008541748668738,
+      c(0.00457246000350281640952328010227885008541748668738,
         -0.00804900791411691821818731763401840373998654987934),
-      C(0.8746342859608052666092782112565360755791467973338452,
+      c(0.8746342859608052666092782112565360755791467973338452,
         0.),
-      C(0.00468190164965444174367477874864366058339647648741,
+      c(0.00468190164965444174367477874864366058339647648741,
         0.0510735563901306197993676329845149741675029197050),
-      C(-0.0023193175200187620902125853834909543869428763219,
+      c(-0.0023193175200187620902125853834909543869428763219,
         -0.025460054739731556004902057663500272721780776336),
-      C(9.11463368405637174660562096516414499772662584e304,
+      c(9.11463368405637174660562096516414499772662584e304,
         3.97101807145263333769664875189354358563218932e305),
-      C(-4.4927207857715598976165541011143706155432296e281,
+      c(-4.4927207857715598976165541011143706155432296e281,
         -2.8019591213423077494444700357168707775769028e281),
-      C(2.820947917809305132678577516325951485807107151e-6,
+      c(2.820947917809305132678577516325951485807107151e-6,
         2.820947917668257736791638444590253942253354058e-6),
-      C(2.82094791773878143474039725787438662716372268e-15,
+      c(2.82094791773878143474039725787438662716372268e-15,
         2.82094791773878143474039725773333923127678361e-15),
-      C(-0.0000563851289696244350147899376081488003110150498,
+      c(-0.0000563851289696244350147899376081488003110150498,
         -0.000169211755126812174631861529808288295454992688),
-      C(-5.586035480670854326218608431294778077663867e-162,
+      c(-5.586035480670854326218608431294778077663867e-162,
         5.586035480670854326218608431294778077663867e-161),
-      C(0.00016318325137140451888255634399123461580248456,
+      c(0.00016318325137140451888255634399123461580248456,
         -0.095232456573009287370728788146686162555021209999),
-      C(0.69504753678406939989115375989939096800793577783885,
+      c(0.69504753678406939989115375989939096800793577783885,
         -1.8916411171103639136680830887017670616339912024317),
-      C(0.0001242418269653279656612334210746733213167234822,
+      c(0.0001242418269653279656612334210746733213167234822,
         7.145975826320186888508563111992099992116786763e-7),
-      C(2.318587329648353318615800865959225429377529825e-8,
+      c(2.318587329648353318615800865959225429377529825e-8,
         6.182899545728857485721417893323317843200933380e-8),
-      C(-0.0133426877243506022053521927604277115767311800303,
+      c(-0.0133426877243506022053521927604277115767311800303,
         -0.0148087097143220769493341484176979826888871576145),
-      C(1.00000000000000012412170838050638522857747934,
+      c(1.00000000000000012412170838050638522857747934,
         1.12837916709551279389615890312156495593616433e-16),
-      C(0.9999999853310704677583504063775310832036830015,
+      c(0.9999999853310704677583504063775310832036830015,
         2.595272024519678881897196435157270184030360773e-8),
-      C(-1.4731421795638279504242963027196663601154624e-15,
+      c(-1.4731421795638279504242963027196663601154624e-15,
         0.090727659684127365236479098488823462473074709),
-      C(5.79246077884410284575834156425396800754409308e-18,
+      c(5.79246077884410284575834156425396800754409308e-18,
         0.0907276596841273652364790985059772809093822374),
-      C(0.0884658993528521953466533278764830881245144368,
+      c(0.0884658993528521953466533278764830881245144368,
         1.37088352495749125283269718778582613192166760e-22),
-      C(0.0345480845419190424370085249304184266813447878,
+      c(0.0345480845419190424370085249304184266813447878,
         2.11161102895179044968099038990446187626075258e-23),
-      C(6.63967719958073440070225527042829242391918213e-36,
+      c(6.63967719958073440070225527042829242391918213e-36,
         0.0630820900592582863713653132559743161572639353),
-      C(0.00179435233208702644891092397579091030658500743634,
+      c(0.00179435233208702644891092397579091030658500743634,
         0.0951983814805270647939647438459699953990788064762),
-      C(9.09760377102097999924241322094863528771095448e-13,
+      c(9.09760377102097999924241322094863528771095448e-13,
         0.0709979210725138550986782242355007611074966717),
-      C(7.2049510279742166460047102593255688682910274423e-304,
+      c(7.2049510279742166460047102593255688682910274423e-304,
         0.0201552956479526953866611812593266285000876784321),
-      C(3.04543604652250734193622967873276113872279682e-44,
+      c(3.04543604652250734193622967873276113872279682e-44,
         0.0566481651760675042930042117726713294607499165),
-      C(3.04543604652250734193622967873276113872279682e-44,
+      c(3.04543604652250734193622967873276113872279682e-44,
         0.0566481651760675042930042117726713294607499165),
-      C(0.5659928732065273429286988428080855057102069081e-12,
+      c(0.5659928732065273429286988428080855057102069081e-12,
         0.056648165176067504292998527162143030538756683302),
-      C(-0.56599287320652734292869884280802459698927645e-12,
+      c(-0.56599287320652734292869884280802459698927645e-12,
         0.0566481651760675042929985271621430305387566833029),
-      C(0.0796884251721652215687859778119964009569455462,
+      c(0.0796884251721652215687859778119964009569455462,
         1.11474461817561675017794941973556302717225126e-22),
-      C(0.07817195821247357458545539935996687005781943386550,
+      c(0.07817195821247357458545539935996687005781943386550,
         -0.01093913670103576690766705513142246633056714279654),
-      C(0.04670032980990449912809326141164730850466208439937,
+      c(0.04670032980990449912809326141164730850466208439937,
         0.03944038961933534137558064191650437353429669886545),
-      C(0.36787944117144232159552377016146086744581113103176,
+      c(0.36787944117144232159552377016146086744581113103176,
         0.60715770584139372911503823580074492116122092866515),
-      C(0,
+      c(0,
         0.010259688805536830986089913987516716056946786526145),
-      C(0.99004983374916805357390597718003655777207908125383,
+      c(0.99004983374916805357390597718003655777207908125383,
         -0.11208866436449538036721343053869621153527769495574),
-      C(0.99999999999999999999999999999999999999990000,
+      c(0.99999999999999999999999999999999999999990000,
         1.12837916709551257389615890312154517168802603e-20),
-      C(0.999999999999943581041645226871305192054749891144158,
+      c(0.999999999999943581041645226871305192054749891144158,
         0),
-      C(0.0110604154853277201542582159216317923453996211744250,
+      c(0.0110604154853277201542582159216317923453996211744250,
         0),
-      C(0,0),
-      C(0,0),
-      C(0,0),
-      C(Inf,0),
-      C(0,0),
-      C(NaN,NaN),
-      C(NaN,NaN),
-      C(NaN,NaN),
-      C(NaN,0),
-      C(NaN,NaN),
-      C(NaN,NaN)
+      c(0,0),
+      c(0,0),
+      c(0,0),
+      c(Inf,0),
+      c(0,0),
+      c(NaN,NaN),
+      c(NaN,NaN),
+      c(NaN,NaN),
+      c(NaN,0),
+      c(NaN,NaN),
+      c(NaN,NaN)
     };
     double errmax = 0;
     for (int i = 0; i < NTST; ++i) {
@@ -2119,116 +2123,116 @@ int main(void) {
 #undef NTST
 #define NTST 41 // define instead of const for C compatibility
     cmplx z[NTST] = {
-      C(1,2),
-      C(-1,2),
-      C(1,-2),
-      C(-1,-2),
-      C(9,-28),
-      C(21,-33),
-      C(1e3,1e3),
-      C(-3001,-1000),
-      C(1e160,-1e159),
-      C(5.1e-3, 1e-8),
-      C(-4.9e-3, 4.95e-3),
-      C(4.9e-3, 0.5),
-      C(4.9e-4, -0.5e1),
-      C(-4.9e-5, -0.5e2),
-      C(5.1e-3, 0.5),
-      C(5.1e-4, -0.5e1),
-      C(-5.1e-5, -0.5e2),
-      C(1e-6,2e-6),
-      C(0,2e-6),
-      C(0,2),
-      C(0,20),
-      C(0,200),
-      C(Inf,0),
-      C(-Inf,0),
-      C(0,Inf),
-      C(0,-Inf),
-      C(Inf,Inf),
-      C(Inf,-Inf),
-      C(NaN,NaN),
-      C(NaN,0),
-      C(0,NaN),
-      C(NaN,Inf),
-      C(Inf,NaN),
-      C(1e-3,NaN),
-      C(7e-2,7e-2),
-      C(7e-2,-7e-4),
-      C(-9e-2,7e-4),
-      C(-9e-2,9e-2),
-      C(-7e-4,9e-2),
-      C(7e-2,0.9e-2),
-      C(7e-2,1.1e-2)
+      c(1,2),
+      c(-1,2),
+      c(1,-2),
+      c(-1,-2),
+      c(9,-28),
+      c(21,-33),
+      c(1e3,1e3),
+      c(-3001,-1000),
+      c(1e160,-1e159),
+      c(5.1e-3, 1e-8),
+      c(-4.9e-3, 4.95e-3),
+      c(4.9e-3, 0.5),
+      c(4.9e-4, -0.5e1),
+      c(-4.9e-5, -0.5e2),
+      c(5.1e-3, 0.5),
+      c(5.1e-4, -0.5e1),
+      c(-5.1e-5, -0.5e2),
+      c(1e-6,2e-6),
+      c(0,2e-6),
+      c(0,2),
+      c(0,20),
+      c(0,200),
+      c(Inf,0),
+      c(-Inf,0),
+      c(0,Inf),
+      c(0,-Inf),
+      c(Inf,Inf),
+      c(Inf,-Inf),
+      c(NaN,NaN),
+      c(NaN,0),
+      c(0,NaN),
+      c(NaN,Inf),
+      c(Inf,NaN),
+      c(1e-3,NaN),
+      c(7e-2,7e-2),
+      c(7e-2,-7e-4),
+      c(-9e-2,7e-4),
+      c(-9e-2,9e-2),
+      c(-7e-4,9e-2),
+      c(7e-2,0.9e-2),
+      c(7e-2,1.1e-2)
     };
     cmplx w[NTST] = { // erf(z[i]), evaluated with Maple
-      C(-0.5366435657785650339917955593141927494421,
+      c(-0.5366435657785650339917955593141927494421,
         -5.049143703447034669543036958614140565553),
-      C(0.5366435657785650339917955593141927494421,
+      c(0.5366435657785650339917955593141927494421,
         -5.049143703447034669543036958614140565553),
-      C(-0.5366435657785650339917955593141927494421,
+      c(-0.5366435657785650339917955593141927494421,
         5.049143703447034669543036958614140565553),
-      C(0.5366435657785650339917955593141927494421,
+      c(0.5366435657785650339917955593141927494421,
         5.049143703447034669543036958614140565553),
-      C(0.3359473673830576996788000505817956637777e304,
+      c(0.3359473673830576996788000505817956637777e304,
         -0.1999896139679880888755589794455069208455e304),
-      C(0.3584459971462946066523939204836760283645e278,
+      c(0.3584459971462946066523939204836760283645e278,
         0.3818954885257184373734213077678011282505e280),
-      C(0.9996020422657148639102150147542224526887,
+      c(0.9996020422657148639102150147542224526887,
         0.00002801044116908227889681753993542916894856),
-      C(-1, 0),
-      C(1, 0),
-      C(0.005754683859034800134412990541076554934877,
+      c(-1, 0),
+      c(1, 0),
+      c(0.005754683859034800134412990541076554934877,
         0.1128349818335058741511924929801267822634e-7),
-      C(-0.005529149142341821193633460286828381876955,
+      c(-0.005529149142341821193633460286828381876955,
         0.005585388387864706679609092447916333443570),
-      C(0.007099365669981359632319829148438283865814,
+      c(0.007099365669981359632319829148438283865814,
         0.6149347012854211635026981277569074001219),
-      C(0.3981176338702323417718189922039863062440e8,
+      c(0.3981176338702323417718189922039863062440e8,
         -0.8298176341665249121085423917575122140650e10),
-      C(-Inf,
+      c(-Inf,
         -Inf),
-      C(0.007389128308257135427153919483147229573895,
+      c(0.007389128308257135427153919483147229573895,
         0.6149332524601658796226417164791221815139),
-      C(0.4143671923267934479245651547534414976991e8,
+      c(0.4143671923267934479245651547534414976991e8,
         -0.8298168216818314211557046346850921446950e10),
-      C(-Inf,
+      c(-Inf,
         -Inf),
-      C(0.1128379167099649964175513742247082845155e-5,
+      c(0.1128379167099649964175513742247082845155e-5,
         0.2256758334191777400570377193451519478895e-5),
-      C(0,
+      c(0,
         0.2256758334194034158904576117253481476197e-5),
-      C(0,
+      c(0,
         18.56480241457555259870429191324101719886),
-      C(0,
+      c(0,
         0.1474797539628786202447733153131835124599e173),
-      C(0,
+      c(0,
         Inf),
-      C(1,0),
-      C(-1,0),
-      C(0,Inf),
-      C(0,-Inf),
-      C(NaN,NaN),
-      C(NaN,NaN),
-      C(NaN,NaN),
-      C(NaN,0),
-      C(0,NaN),
-      C(NaN,NaN),
-      C(NaN,NaN),
-      C(NaN,NaN),
-      C(0.07924380404615782687930591956705225541145,
+      c(1,0),
+      c(-1,0),
+      c(0,Inf),
+      c(0,-Inf),
+      c(NaN,NaN),
+      c(NaN,NaN),
+      c(NaN,NaN),
+      c(NaN,0),
+      c(0,NaN),
+      c(NaN,NaN),
+      c(NaN,NaN),
+      c(NaN,NaN),
+      c(0.07924380404615782687930591956705225541145,
         0.07872776218046681145537914954027729115247),
-      C(0.07885775828512276968931773651224684454495,
+      c(0.07885775828512276968931773651224684454495,
         -0.0007860046704118224342390725280161272277506),
-      C(-0.1012806432747198859687963080684978759881,
+      c(-0.1012806432747198859687963080684978759881,
         0.0007834934747022035607566216654982820299469),
-      C(-0.1020998418798097910247132140051062512527,
+      c(-0.1020998418798097910247132140051062512527,
         0.1010030778892310851309082083238896270340),
-      C(-0.0007962891763147907785684591823889484764272,
+      c(-0.0007962891763147907785684591823889484764272,
         0.1018289385936278171741809237435404896152),
-      C(0.07886408666470478681566329888615410479530,
+      c(0.07886408666470478681566329888615410479530,
         0.01010604288780868961492224347707949372245),
-      C(0.07886723099940260286824654364807981336591,
+      c(0.07886723099940260286824654364807981336591,
         0.01235199327873258197931147306290916629654)
     };
 #define TST(f,isc)                                                      \
@@ -2252,21 +2256,21 @@ int main(void) {
     for (int i = 0; i < 10000; ++i) {                                   \
       double x = pow(10., -300. + i * 600. / (10000 - 1));              \
       double re_err = relerr(FADDEEVA_RE(f)(x),                         \
-                             creal(FADDEEVA(f)(C(x,x*isc),0.)));        \
+                             creal(FADDEEVA(f)(c(x,x*isc),0.)));        \
       if (re_err > errmax) errmax = re_err;                             \
       re_err = relerr(FADDEEVA_RE(f)(-x),                               \
-                      creal(FADDEEVA(f)(C(-x,x*isc),0.)));              \
+                      creal(FADDEEVA(f)(c(-x,x*isc),0.)));              \
       if (re_err > errmax) errmax = re_err;                             \
     }                                                                   \
     {                                                                   \
       double re_err = relerr(FADDEEVA_RE(f)(Inf),                       \
-                             creal(FADDEEVA(f)(C(Inf,0.),0.))); \
+                             creal(FADDEEVA(f)(c(Inf,0.),0.))); \
       if (re_err > errmax) errmax = re_err;                             \
       re_err = relerr(FADDEEVA_RE(f)(-Inf),                             \
-                      creal(FADDEEVA(f)(C(-Inf,0.),0.)));               \
+                      creal(FADDEEVA(f)(c(-Inf,0.),0.)));               \
       if (re_err > errmax) errmax = re_err;                             \
       re_err = relerr(FADDEEVA_RE(f)(NaN),                              \
-                      creal(FADDEEVA(f)(C(NaN,0.),0.)));                \
+                      creal(FADDEEVA(f)(c(NaN,0.),0.)));                \
       if (re_err > errmax) errmax = re_err;                             \
     }                                                                   \
     if (errmax > 1e-13) {                                               \
@@ -2283,9 +2287,9 @@ int main(void) {
     // be sufficient to make sure I didn't screw up the signs or something
 #undef NTST
 #define NTST 1 // define instead of const for C compatibility
-    cmplx z[NTST] = { C(1.234,0.5678) };
+    cmplx z[NTST] = { c(1.234,0.5678) };
     cmplx w[NTST] = { // erfi(z[i]), computed with Maple
-      C(1.081032284405373149432716643834106923212,
+      c(1.081032284405373149432716643834106923212,
         1.926775520840916645838949402886591180834)
     };
     TST(erfi, 0);
@@ -2295,9 +2299,9 @@ int main(void) {
     // be sufficient to make sure I didn't screw up the signs or something
 #undef NTST
 #define NTST 1 // define instead of const for C compatibility
-    cmplx z[NTST] = { C(1.234,0.5678) };
+    cmplx z[NTST] = { c(1.234,0.5678) };
     cmplx w[NTST] = { // erfcx(z[i]), computed with Maple
-      C(0.3382187479799972294747793561190487832579,
+      c(0.3382187479799972294747793561190487832579,
         -0.1116077470811648467464927471872945833154)
     };
     TST(erfcx, 0);
@@ -2306,82 +2310,82 @@ int main(void) {
 #undef NTST
 #define NTST 30 // define instead of const for C compatibility
     cmplx z[NTST] = {
-      C(1,2),
-      C(-1,2),
-      C(1,-2),
-      C(-1,-2),
-      C(9,-28),
-      C(21,-33),
-      C(1e3,1e3),
-      C(-3001,-1000),
-      C(1e160,-1e159),
-      C(5.1e-3, 1e-8),
-      C(0,2e-6),
-      C(0,2),
-      C(0,20),
-      C(0,200),
-      C(2e-6,0),
-      C(2,0),
-      C(20,0),
-      C(200,0),
-      C(Inf,0),
-      C(-Inf,0),
-      C(0,Inf),
-      C(0,-Inf),
-      C(Inf,Inf),
-      C(Inf,-Inf),
-      C(NaN,NaN),
-      C(NaN,0),
-      C(0,NaN),
-      C(NaN,Inf),
-      C(Inf,NaN),
-      C(88,0)
+      c(1,2),
+      c(-1,2),
+      c(1,-2),
+      c(-1,-2),
+      c(9,-28),
+      c(21,-33),
+      c(1e3,1e3),
+      c(-3001,-1000),
+      c(1e160,-1e159),
+      c(5.1e-3, 1e-8),
+      c(0,2e-6),
+      c(0,2),
+      c(0,20),
+      c(0,200),
+      c(2e-6,0),
+      c(2,0),
+      c(20,0),
+      c(200,0),
+      c(Inf,0),
+      c(-Inf,0),
+      c(0,Inf),
+      c(0,-Inf),
+      c(Inf,Inf),
+      c(Inf,-Inf),
+      c(NaN,NaN),
+      c(NaN,0),
+      c(0,NaN),
+      c(NaN,Inf),
+      c(Inf,NaN),
+      c(88,0)
     };
     cmplx w[NTST] = { // erfc(z[i]), evaluated with Maple
-      C(1.536643565778565033991795559314192749442,
+      c(1.536643565778565033991795559314192749442,
         5.049143703447034669543036958614140565553),
-      C(0.4633564342214349660082044406858072505579,
+      c(0.4633564342214349660082044406858072505579,
         5.049143703447034669543036958614140565553),
-      C(1.536643565778565033991795559314192749442,
+      c(1.536643565778565033991795559314192749442,
         -5.049143703447034669543036958614140565553),
-      C(0.4633564342214349660082044406858072505579,
+      c(0.4633564342214349660082044406858072505579,
         -5.049143703447034669543036958614140565553),
-      C(-0.3359473673830576996788000505817956637777e304,
+      c(-0.3359473673830576996788000505817956637777e304,
         0.1999896139679880888755589794455069208455e304),
-      C(-0.3584459971462946066523939204836760283645e278,
+      c(-0.3584459971462946066523939204836760283645e278,
         -0.3818954885257184373734213077678011282505e280),
-      C(0.0003979577342851360897849852457775473112748,
+      c(0.0003979577342851360897849852457775473112748,
         -0.00002801044116908227889681753993542916894856),
-      C(2, 0),
-      C(0, 0),
-      C(0.9942453161409651998655870094589234450651,
+      c(2, 0),
+      c(0, 0),
+      c(0.9942453161409651998655870094589234450651,
         -0.1128349818335058741511924929801267822634e-7),
-      C(1,
+      c(1,
         -0.2256758334194034158904576117253481476197e-5),
-      C(1,
+      c(1,
         -18.56480241457555259870429191324101719886),
-      C(1,
+      c(1,
         -0.1474797539628786202447733153131835124599e173),
-      C(1, -Inf),
-      C(0.9999977432416658119838633199332831406314,
+      c(1, -Inf),
+      c(0.9999977432416658119838633199332831406314,
         0),
-      C(0.004677734981047265837930743632747071389108,
+      c(0.004677734981047265837930743632747071389108,
         0),
-      C(0.5395865611607900928934999167905345604088e-175,
+      c(0.5395865611607900928934999167905345604088e-175,
         0),
-      C(0, 0),
-      C(0, 0),
-      C(2, 0),
-      C(1, -Inf),
-      C(1, Inf),
-      C(NaN, NaN),
-      C(NaN, NaN),
-      C(NaN, NaN),
-      C(NaN, 0),
-      C(1, NaN),
-      C(NaN, NaN),
-      C(NaN, NaN),
-      C(0,0)
+      c(0, 0),
+      c(0, 0),
+      c(2, 0),
+      c(1, -Inf),
+      c(1, Inf),
+      c(NaN, NaN),
+      c(NaN, NaN),
+      c(NaN, NaN),
+      c(NaN, 0),
+      c(1, NaN),
+      c(NaN, NaN),
+      c(NaN, NaN),
+      c(0,0)
     };
     TST(erfc, 1e-20);
   }
@@ -2389,134 +2393,134 @@ int main(void) {
 #undef NTST
 #define NTST 48 // define instead of const for C compatibility
     cmplx z[NTST] = {
-      C(2,1),
-      C(-2,1),
-      C(2,-1),
-      C(-2,-1),
-      C(-28,9),
-      C(33,-21),
-      C(1e3,1e3),
-      C(-1000,-3001),
-      C(1e-8, 5.1e-3),
-      C(4.95e-3, -4.9e-3),
-      C(5.1e-3, 5.1e-3),
-      C(0.5, 4.9e-3),
-      C(-0.5e1, 4.9e-4),
-      C(-0.5e2, -4.9e-5),
-      C(0.5e3, 4.9e-6),
-      C(0.5, 5.1e-3),
-      C(-0.5e1, 5.1e-4),
-      C(-0.5e2, -5.1e-5),
-      C(1e-6,2e-6),
-      C(2e-6,0),
-      C(2,0),
-      C(20,0),
-      C(200,0),
-      C(0,4.9e-3),
-      C(0,-5.1e-3),
-      C(0,2e-6),
-      C(0,-2),
-      C(0,20),
-      C(0,-200),
-      C(Inf,0),
-      C(-Inf,0),
-      C(0,Inf),
-      C(0,-Inf),
-      C(Inf,Inf),
-      C(Inf,-Inf),
-      C(NaN,NaN),
-      C(NaN,0),
-      C(0,NaN),
-      C(NaN,Inf),
-      C(Inf,NaN),
-      C(39, 6.4e-5),
-      C(41, 6.09e-5),
-      C(4.9e7, 5e-11),
-      C(5.1e7, 4.8e-11),
-      C(1e9, 2.4e-12),
-      C(1e11, 2.4e-14),
-      C(1e13, 2.4e-16),
-      C(1e300, 2.4e-303)
+      c(2,1),
+      c(-2,1),
+      c(2,-1),
+      c(-2,-1),
+      c(-28,9),
+      c(33,-21),
+      c(1e3,1e3),
+      c(-1000,-3001),
+      c(1e-8, 5.1e-3),
+      c(4.95e-3, -4.9e-3),
+      c(5.1e-3, 5.1e-3),
+      c(0.5, 4.9e-3),
+      c(-0.5e1, 4.9e-4),
+      c(-0.5e2, -4.9e-5),
+      c(0.5e3, 4.9e-6),
+      c(0.5, 5.1e-3),
+      c(-0.5e1, 5.1e-4),
+      c(-0.5e2, -5.1e-5),
+      c(1e-6,2e-6),
+      c(2e-6,0),
+      c(2,0),
+      c(20,0),
+      c(200,0),
+      c(0,4.9e-3),
+      c(0,-5.1e-3),
+      c(0,2e-6),
+      c(0,-2),
+      c(0,20),
+      c(0,-200),
+      c(Inf,0),
+      c(-Inf,0),
+      c(0,Inf),
+      c(0,-Inf),
+      c(Inf,Inf),
+      c(Inf,-Inf),
+      c(NaN,NaN),
+      c(NaN,0),
+      c(0,NaN),
+      c(NaN,Inf),
+      c(Inf,NaN),
+      c(39, 6.4e-5),
+      c(41, 6.09e-5),
+      c(4.9e7, 5e-11),
+      c(5.1e7, 4.8e-11),
+      c(1e9, 2.4e-12),
+      c(1e11, 2.4e-14),
+      c(1e13, 2.4e-16),
+      c(1e300, 2.4e-303)
     };
     cmplx w[NTST] = { // dawson(z[i]), evaluated with Maple
-      C(0.1635394094345355614904345232875688576839,
+      c(0.1635394094345355614904345232875688576839,
         -0.1531245755371229803585918112683241066853),
-      C(-0.1635394094345355614904345232875688576839,
+      c(-0.1635394094345355614904345232875688576839,
         -0.1531245755371229803585918112683241066853),
-      C(0.1635394094345355614904345232875688576839,
+      c(0.1635394094345355614904345232875688576839,
         0.1531245755371229803585918112683241066853),
-      C(-0.1635394094345355614904345232875688576839,
+      c(-0.1635394094345355614904345232875688576839,
         0.1531245755371229803585918112683241066853),
-      C(-0.01619082256681596362895875232699626384420,
+      c(-0.01619082256681596362895875232699626384420,
         -0.005210224203359059109181555401330902819419),
-      C(0.01078377080978103125464543240346760257008,
+      c(0.01078377080978103125464543240346760257008,
         0.006866888783433775382193630944275682670599),
-      C(-0.5808616819196736225612296471081337245459,
+      c(-0.5808616819196736225612296471081337245459,
         0.6688593905505562263387760667171706325749),
-      C(Inf,
+      c(Inf,
         -Inf),
-      C(0.1000052020902036118082966385855563526705e-7,
+      c(0.1000052020902036118082966385855563526705e-7,
         0.005100088434920073153418834680320146441685),
-      C(0.004950156837581592745389973960217444687524,
+      c(0.004950156837581592745389973960217444687524,
         -0.004899838305155226382584756154100963570500),
-      C(0.005100176864319675957314822982399286703798,
+      c(0.005100176864319675957314822982399286703798,
         0.005099823128319785355949825238269336481254),
-      C(0.4244534840871830045021143490355372016428,
+      c(0.4244534840871830045021143490355372016428,
         0.002820278933186814021399602648373095266538),
-      C(-0.1021340733271046543881236523269967674156,
+      c(-0.1021340733271046543881236523269967674156,
         -0.00001045696456072005761498961861088944159916),
-      C(-0.01000200120119206748855061636187197886859,
+      c(-0.01000200120119206748855061636187197886859,
         0.9805885888237419500266621041508714123763e-8),
-      C(0.001000002000012000023960527532953151819595,
+      c(0.001000002000012000023960527532953151819595,
         -0.9800058800588007290937355024646722133204e-11),
-      C(0.4244549085628511778373438768121222815752,
+      c(0.4244549085628511778373438768121222815752,
         0.002935393851311701428647152230552122898291),
-      C(-0.1021340732357117208743299813648493928105,
+      c(-0.1021340732357117208743299813648493928105,
         -0.00001088377943049851799938998805451564893540),
-      C(-0.01000200120119126652710792390331206563616,
+      c(-0.01000200120119126652710792390331206563616,
         0.1020612612857282306892368985525393707486e-7),
-      C(0.1000000000007333333333344266666666664457e-5,
+      c(0.1000000000007333333333344266666666664457e-5,
         0.2000000000001333333333323199999999978819e-5),
-      C(0.1999999999994666666666675199999999990248e-5,
+      c(0.1999999999994666666666675199999999990248e-5,
         0),
-      C(0.3013403889237919660346644392864226952119,
+      c(0.3013403889237919660346644392864226952119,
         0),
-      C(0.02503136792640367194699495234782353186858,
+      c(0.02503136792640367194699495234782353186858,
         0),
-      C(0.002500031251171948248596912483183760683918,
+      c(0.002500031251171948248596912483183760683918,
         0),
-      C(0,0.004900078433419939164774792850907128053308),
-      C(0,-0.005100088434920074173454208832365950009419),
-      C(0,0.2000000000005333333333341866666666676419e-5),
-      C(0,-48.16001211429122974789822893525016528191),
-      C(0,0.4627407029504443513654142715903005954668e174),
-      C(0,-Inf),
-      C(0,0),
-      C(-0,0),
-      C(0, Inf),
-      C(0, -Inf),
-      C(NaN, NaN),
-      C(NaN, NaN),
-      C(NaN, NaN),
-      C(NaN, 0),
-      C(0, NaN),
-      C(NaN, NaN),
-      C(NaN, NaN),
-      C(0.01282473148489433743567240624939698290584,
+      c(0,0.004900078433419939164774792850907128053308),
+      c(0,-0.005100088434920074173454208832365950009419),
+      c(0,0.2000000000005333333333341866666666676419e-5),
+      c(0,-48.16001211429122974789822893525016528191),
+      c(0,0.4627407029504443513654142715903005954668e174),
+      c(0,-Inf),
+      c(0,0),
+      c(-0,0),
+      c(0, Inf),
+      c(0, -Inf),
+      c(NaN, NaN),
+      c(NaN, NaN),
+      c(NaN, NaN),
+      c(NaN, 0),
+      c(0, NaN),
+      c(NaN, NaN),
+      c(NaN, NaN),
+      c(0.01282473148489433743567240624939698290584,
         -0.2105957276516618621447832572909153498104e-7),
-      C(0.01219875253423634378984109995893708152885,
+      c(0.01219875253423634378984109995893708152885,
         -0.1813040560401824664088425926165834355953e-7),
-      C(0.1020408163265306334945473399689037886997e-7,
+      c(0.1020408163265306334945473399689037886997e-7,
         -0.1041232819658476285651490827866174985330e-25),
-      C(0.9803921568627452865036825956835185367356e-8,
+      c(0.9803921568627452865036825956835185367356e-8,
         -0.9227220299884665067601095648451913375754e-26),
-      C(0.5000000000000000002500000000000000003750e-9,
+      c(0.5000000000000000002500000000000000003750e-9,
         -0.1200000000000000001800000188712838420241e-29),
-      C(5.00000000000000000000025000000000000000000003e-12,
+      c(5.00000000000000000000025000000000000000000003e-12,
         -1.20000000000000000000018000000000000000000004e-36),
-      C(5.00000000000000000000000002500000000000000000e-14,
+      c(5.00000000000000000000000002500000000000000000e-14,
         -1.20000000000000000000000001800000000000000000e-42),
-      C(5e-301, 0)
+      c(5e-301, 0)
     };
     TST(Dawson, 1e-20);
   }

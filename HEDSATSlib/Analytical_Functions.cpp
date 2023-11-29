@@ -12,7 +12,7 @@
 #include <sstream>
 #include <complex>
 
-using namespace std;
+// using namespace std;
 
 
 #define pi 3.141592654
@@ -221,7 +221,7 @@ std::cout<<"******************************************"<<std::endl;
 }
 
 double erf(double x){
-	double magxerf=sqrt(ThermalA::intpow(x,2));
+	double magxerf=std::sqrt(ThermalA::intpow(x,2));
  double y = 1.0 / ( 1.0 + 0.3275911 * magxerf);
  double erf= 1 - (((((
         + 1.061405429  * y
@@ -229,7 +229,7 @@ double erf(double x){
         + 1.421413741) * y
         - 0.284496736) * y
         + 0.254829592) * y)
-        * exp (-magxerf * magxerf);
+        * std::exp (-magxerf * magxerf);
  if(0<x){
 return erf;
  }
@@ -286,7 +286,7 @@ sign=-1.00;
 /* This approximation, taken from Table 50 of Blair et al., is valid
    for .9375<=|x|<=1-10^-100 and has a maximum relative error of 2.45 x 10^-8. */
 
-    t=1.0/sqrt(-log(1.0-ax));
+    t=1.0/std::sqrt(-std::log(1.0-ax));
     ret = sign*(p[0]/t+p[1]+t*(p[2]+t*(p[3]+t*(p[4]+t*p[5]))))/
           (q[0]+t*(q[1]+t*(q[2])));
     } else  {
@@ -317,7 +317,7 @@ return out;
 
 double power_ramping_function(double t_prime,double ts, double tf, double r_start, double r_fall){
 
-double ramping=((1/(1+(exp(-r_start*(t_prime-(ts+(log(99.0)/r_start)))))))*((1/(1+(exp(r_fall*(t_prime-(tf-(log(99.0)/r_fall)))))))));
+double ramping=((1/(1+(std::exp(-r_start*(t_prime-(ts+(std::log(99.0)/r_start)))))))*((1/(1+(std::exp(r_fall*(t_prime-(tf-(std::log(99.0)/r_fall)))))))));
 return ramping;
 
 }
@@ -337,18 +337,18 @@ return ramping;
 //	double bb=ThermalA::intpow(b,2);
 //	double crcr=ThermalA::intpow(cr,2);
 //	double cfcf=ThermalA::intpow(cf,2);
-//	double t_minus_t_prime=(sqrt(ThermalA::intpow((t-t_prime),2)));
+//	double t_minus_t_prime=(std::sqrt(ThermalA::intpow((t-t_prime),2)));
 //double kappa12ttp=(12*kappa*(t_minus_t_prime));
 //	//double kappa12ttp=(12*kappa*(t-t_prime));
 //
 //
-//	double A_r=(1/sqrt((kappa12ttp+crcr)))*(exp(-3*((ThermalA::intpow((z-(v_arc*t_prime)),2))/(kappa12ttp+crcr))));
-//	double A_f=(1/sqrt((kappa12ttp+cfcf)))*(exp(-3*((ThermalA::intpow((z-(v_arc*t_prime)),2))/(kappa12ttp+cfcf))));
+//	double A_r=(1/std::sqrt((kappa12ttp+crcr)))*(std::exp(-3*((ThermalA::intpow((z-(v_arc*t_prime)),2))/(kappa12ttp+crcr))));
+//	double A_f=(1/std::sqrt((kappa12ttp+cfcf)))*(std::exp(-3*((ThermalA::intpow((z-(v_arc*t_prime)),2))/(kappa12ttp+cfcf))));
 //
-//	double B_r= ThermalA::erf((cr/2)*((z-(v_arc*t_prime))/(sqrt(kappa12ttp/12)*sqrt(kappa12ttp+crcr))));
-//	double B_f= ThermalA::erf((cf/2)*((z-(v_arc*t_prime))/(sqrt(kappa12ttp/12)*sqrt(kappa12ttp+cfcf))));
+//	double B_r= ThermalA::erf((cr/2)*((z-(v_arc*t_prime))/(std::sqrt(kappa12ttp/12)*std::sqrt(kappa12ttp+crcr))));
+//	double B_f= ThermalA::erf((cf/2)*((z-(v_arc*t_prime))/(std::sqrt(kappa12ttp/12)*std::sqrt(kappa12ttp+cfcf))));
 ////cout<<B_f<<endl;
-//double part_past_integral_infinite=((1/(sqrt(kappa12ttp+aa)*sqrt(kappa12ttp+bb)))*(exp(-3*((xx/(kappa12ttp+aa))+(yy/(kappa12ttp+bb)))))*((rr*A_r*(1-B_r))+(rf*A_f*(1+B_f))));
+//double part_past_integral_infinite=((1/(std::sqrt(kappa12ttp+aa)*std::sqrt(kappa12ttp+bb)))*(std::exp(-3*((xx/(kappa12ttp+aa))+(yy/(kappa12ttp+bb)))))*((rr*A_r*(1-B_r))+(rf*A_f*(1+B_f))));
 //return part_past_integral_infinite;
 //}
 
@@ -481,10 +481,10 @@ return ramping;
 //complex<double> E_y_arg;
 //complex<double> F_y_arg;
 //
-//double first_part=((ThermalA::intpow(b,2)*Beta_m[m])/(D))/(2*sqrt(3.00)*b);//for
-//double second_part=(6*(D-d_g))/(2*sqrt(3.00)*b);//for
-//double third_part=(6*(d_g-D))/(2*sqrt(3.00)*b);//for
-//double fourth_part=(b*Beta_m[m])/(2*sqrt(3.00)*D);//for ThermalA::erf
+//double first_part=((ThermalA::intpow(b,2)*Beta_m[m])/(D))/(2*std::sqrt(3.00)*b);//for
+//double second_part=(6*(D-d_g))/(2*std::sqrt(3.00)*b);//for
+//double third_part=(6*(d_g-D))/(2*std::sqrt(3.00)*b);//for
+//double fourth_part=(b*Beta_m[m])/(2*std::sqrt(3.00)*D);//for ThermalA::erf
 //
 //
 //  A_y_arg = complex<double>(first_part,second_part);
@@ -494,19 +494,19 @@ return ramping;
 //  E_y_arg = complex<double>(fourth_part,0);
 //  F_y_arg = complex<double>(first_part,third_part);
 //
-//double A_y=cos(argument_of_trig_fns1)*imag(Faddeeva::erfi(A_y_arg));
-//double B_y=cos(argument_of_trig_fns2)*imag(Faddeeva::erfi(B_y_arg));
-//double C_y=sin(argument_of_trig_fns1)*real(Faddeeva::erfi(C_y_arg));
-//double D_y=sin(argument_of_trig_fns1)*real(Faddeeva::erfi(D_y_arg));
-//double E_y=sin(argument_of_trig_fns2)*real(Faddeeva::erfi(E_y_arg));
-//double F_y=sin(argument_of_trig_fns2)*real(Faddeeva::erfi(F_y_arg));
+//double A_y=std::cos(argument_of_trig_fns1)*imag(Faddeeva::erfi(A_y_arg));
+//double B_y=std::cos(argument_of_trig_fns2)*imag(Faddeeva::erfi(B_y_arg));
+//double C_y=std::sin(argument_of_trig_fns1)*real(Faddeeva::erfi(C_y_arg));
+//double D_y=std::sin(argument_of_trig_fns1)*real(Faddeeva::erfi(D_y_arg));
+//double E_y=std::sin(argument_of_trig_fns2)*real(Faddeeva::erfi(E_y_arg));
+//double F_y=std::sin(argument_of_trig_fns2)*real(Faddeeva::erfi(F_y_arg));
 //
 //
 //double Omegla=(A_y)-(B_y)-(C_y)+(D_y)+(E_y)-(F_y);
 //double denominator=(4*D*(B_Nuss+ThermalA::intpow(B_Nuss,2)+ThermalA::intpow(Beta_m[m],2)));
-////double Omegla=(2*cos((Beta_m[m]*(ThermalA::intpow(D,2)-(D*d_g)))/(ThermalA::intpow(D,2)))*ThermalA::erf((6.00*(ThermalA::intpow(D,2)-(D*d_g)))/(2*sqrt(3.00)*b*D)))+(2*Faddeeva::erfi((b*Beta_m[m])/(2*sqrt(3.00)*D))*sin((Beta_m[m]*(ThermalA::intpow(D,2)-(D*d_g)))/(ThermalA::intpow(D,2))));
-////double numerator=2*b*(exp(-1*((pow(Beta_m[m],2.00)*(pow(b,2.00)+(12*alpha*(t-t_prime))))/(12*pow(D,2.00)))))*(sqrt(pi/3.00))*(ThermalA::intpow(B_Nuss,2)+ThermalA::intpow(Beta_m[m],2))*(cos(Beta_m[m]-((y*Beta_m[m])/D)));
-//double numerator=2*b*exp(-((ThermalA::intpow(Beta_m[m],2)*(ThermalA::intpow(b,2)+(12*alpha*(t-t_prime))))/(12*ThermalA::intpow(D,2))))*sqrt(pi/3.00)*(ThermalA::intpow(B_Nuss,2)+ThermalA::intpow(Beta_m[m],2))*cos(Beta_m[m]-((y*Beta_m[m])/(D)))*Omegla;
+////double Omegla=(2*std::cos((Beta_m[m]*(ThermalA::intpow(D,2)-(D*d_g)))/(ThermalA::intpow(D,2)))*ThermalA::erf((6.00*(ThermalA::intpow(D,2)-(D*d_g)))/(2*std::sqrt(3.00)*b*D)))+(2*Faddeeva::erfi((b*Beta_m[m])/(2*std::sqrt(3.00)*D))*std::sin((Beta_m[m]*(ThermalA::intpow(D,2)-(D*d_g)))/(ThermalA::intpow(D,2))));
+////double numerator=2*b*(std::exp(-1*((pow(Beta_m[m],2.00)*(pow(b,2.00)+(12*alpha*(t-t_prime))))/(12*pow(D,2.00)))))*(std::sqrt(pi/3.00))*(ThermalA::intpow(B_Nuss,2)+ThermalA::intpow(Beta_m[m],2))*(std::cos(Beta_m[m]-((y*Beta_m[m])/D)));
+//double numerator=2*b*std::exp(-((ThermalA::intpow(Beta_m[m],2)*(ThermalA::intpow(b,2)+(12*alpha*(t-t_prime))))/(12*ThermalA::intpow(D,2))))*std::sqrt(pi/3.00)*(ThermalA::intpow(B_Nuss,2)+ThermalA::intpow(Beta_m[m],2))*std::cos(Beta_m[m]-((y*Beta_m[m])/(D)))*Omegla;
 //
 //
 //Y33=Y33+((numerator)/denominator);
@@ -545,10 +545,10 @@ return ramping;
 //complex<double> G_y_arg;
 //complex<double> H_y_arg;
 //
-//double first_part=((ThermalA::intpow(b,2)*Beta_m[m])/(2*sqrt(3.00)*b*D));//for erfi
-//double second_part=((6*D*d_g)/(2*sqrt(3.00)*b*D));//for erfi
-//double third_part=((6*(ThermalA::intpow(D,2)-(D*d_g)))/(2*sqrt(3.00)*b*D));//for ThermalA::erf
-////double fourth_part=(()/(2*sqrt(3.00)*b*D));//for ThermalA::erf
+//double first_part=((ThermalA::intpow(b,2)*Beta_m[m])/(2*std::sqrt(3.00)*b*D));//for erfi
+//double second_part=((6*D*d_g)/(2*std::sqrt(3.00)*b*D));//for erfi
+//double third_part=((6*(ThermalA::intpow(D,2)-(D*d_g)))/(2*std::sqrt(3.00)*b*D));//for ThermalA::erf
+////double fourth_part=(()/(2*std::sqrt(3.00)*b*D));//for ThermalA::erf
 //
 //
 //  A_y_arg = complex<double>(first_part,-second_part);
@@ -562,19 +562,19 @@ return ramping;
 //  H_y_arg = complex<double>(first_part,second_part);
 //
 //
-//double A_y=(cos(argument_of_trig_fns)*imag(Faddeeva::erfi(A_y_arg)));
-//double B_y=(cos(argument_of_trig_fns)*imag(Faddeeva::erfi(B_y_arg)));
-//double C_y=(cos(argument_of_trig_fns)*real(Faddeeva::erf(C_y_arg)));
-//double D_y=(cos(argument_of_trig_fns)*real(Faddeeva::erf(D_y_arg)));
-//double E_y=(sin(argument_of_trig_fns)*imag(Faddeeva::erf(E_y_arg)));
-//double F_y=(sin(argument_of_trig_fns)*real(Faddeeva::erfi(F_y_arg)));
-//double G_y=(sin(argument_of_trig_fns)*imag(Faddeeva::erf(G_y_arg)));
-//double H_y=(sin(argument_of_trig_fns)*real(Faddeeva::erfi(H_y_arg)));
+//double A_y=(std::cos(argument_of_trig_fns)*imag(Faddeeva::erfi(A_y_arg)));
+//double B_y=(std::cos(argument_of_trig_fns)*imag(Faddeeva::erfi(B_y_arg)));
+//double C_y=(std::cos(argument_of_trig_fns)*real(Faddeeva::erf(C_y_arg)));
+//double D_y=(std::cos(argument_of_trig_fns)*real(Faddeeva::erf(D_y_arg)));
+//double E_y=(std::sin(argument_of_trig_fns)*imag(Faddeeva::erf(E_y_arg)));
+//double F_y=(std::sin(argument_of_trig_fns)*real(Faddeeva::erfi(F_y_arg)));
+//double G_y=(std::sin(argument_of_trig_fns)*imag(Faddeeva::erf(G_y_arg)));
+//double H_y=(std::sin(argument_of_trig_fns)*real(Faddeeva::erfi(H_y_arg)));
 //
 //double Omegla=(-1*(A_y))+(B_y)+(C_y)+(D_y)+(E_y)+(F_y)-(G_y)+(H_y);
 //
 //double denominator=(D*4*(B_Nuss+ThermalA::intpow(B_Nuss,2)+ThermalA::intpow(Beta_m[m],2)));
-//double numerator=2*b*exp(-((ThermalA::intpow(Beta_m[m],2)*((ThermalA::intpow(b,2))+(12*alpha*(t-t_prime))))/(12*ThermalA::intpow(D,2))))*sqrt(pi/3.00)*(ThermalA::intpow(B_Nuss,2)+ThermalA::intpow(Beta_m[m],2))*cos(Beta_m[m]-((y*Beta_m[m])/(D)))*Omegla;
+//double numerator=2*b*std::exp(-((ThermalA::intpow(Beta_m[m],2)*((ThermalA::intpow(b,2))+(12*alpha*(t-t_prime))))/(12*ThermalA::intpow(D,2))))*std::sqrt(pi/3.00)*(ThermalA::intpow(B_Nuss,2)+ThermalA::intpow(Beta_m[m],2))*std::cos(Beta_m[m]-((y*Beta_m[m])/(D)))*Omegla;
 //Y33=Y33+((numerator)/denominator);
 ////cout<<"to test"<<"\t"<<Y33<<endl;
 //
@@ -592,9 +592,9 @@ return ramping;
 //double Y22=0;
 //for(int n=-30;n<=30;n++){
 //
-//double erf_denom=2*b*sqrt(alpha)*sqrt(t-t_prime)*sqrt(ThermalA::intpow(b,2)+(12*alpha*(t-t_prime)));
-//double numerator=b*exp(-((3*ThermalA::intpow(((2*D*n)+y-(d_g*(1+(2*n)))),2))/(ThermalA::intpow(b,2)+(12*alpha*(t-t_prime)))))*sqrt(alpha)*(ThermalA::erf(((ThermalA::intpow(b,2)*(D+(2*D*n)+y))+(12*D*t*alpha)-(2*d_g*((ThermalA::intpow(b,2)*(1+n))+(6*t*alpha)))+(12*alpha*t_prime*(-D+d_g)))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(b,2)*(D-(2*D*n)-y))+(12*D*t*alpha)-(12*D*t_prime*alpha)+(2*d_g*((ThermalA::intpow(b,2)*n)-(6*t*alpha)+(6*t_prime*alpha))))/(erf_denom)))*sqrt(t-t_prime);
-//double denominator=2*sqrt(alpha*(t-t_prime))*sqrt(ThermalA::intpow(b,2)+(12*alpha*(t-t_prime)));
+//double erf_denom=2*b*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt(ThermalA::intpow(b,2)+(12*alpha*(t-t_prime)));
+//double numerator=b*std::exp(-((3*ThermalA::intpow(((2*D*n)+y-(d_g*(1+(2*n)))),2))/(ThermalA::intpow(b,2)+(12*alpha*(t-t_prime)))))*std::sqrt(alpha)*(ThermalA::erf(((ThermalA::intpow(b,2)*(D+(2*D*n)+y))+(12*D*t*alpha)-(2*d_g*((ThermalA::intpow(b,2)*(1+n))+(6*t*alpha)))+(12*alpha*t_prime*(-D+d_g)))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(b,2)*(D-(2*D*n)-y))+(12*D*t*alpha)-(12*D*t_prime*alpha)+(2*d_g*((ThermalA::intpow(b,2)*n)-(6*t*alpha)+(6*t_prime*alpha))))/(erf_denom)))*std::sqrt(t-t_prime);
+//double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt(ThermalA::intpow(b,2)+(12*alpha*(t-t_prime)));
 //
 //
 //Y22+=numerator/denominator;
@@ -694,41 +694,41 @@ for(int m=0;m<228;m++){//64
 double argument_of_trig_fns=Beta_m[m]*(d_g/D);
 //double argument_of_trig_fns2=Beta_m[m]-((Beta_m[m]*d_g)/(D));
 
-complex<double> A_y_arg;
-complex<double> B_y_arg;
-complex<double> C_y_arg;
-complex<double> D_y_arg;
+std::complex<double> A_y_arg;
+std::complex<double> B_y_arg;
+std::complex<double> C_y_arg;
+std::complex<double> D_y_arg;
 
 
-double first_part=(d_g*sqrt(3.00))/(b);//for
-double second_part=(b*Beta_m[m])/(2*sqrt(3.00)*D);//for
-double third_part=(6*(ThermalA::intpow(D,2)-(D*d_g)))/(2*sqrt(3.00)*b*D);//for
+double first_part=(d_g*std::sqrt(3.00))/(b);//for
+double second_part=(b*Beta_m[m])/(2*std::sqrt(3.00)*D);//for
+double third_part=(6*(ThermalA::intpow(D,2)-(D*d_g)))/(2*std::sqrt(3.00)*b*D);//for
 
-  A_y_arg = complex<double>(first_part,-second_part);
-  B_y_arg = complex<double>(first_part,second_part);
-  C_y_arg = complex<double>(third_part,second_part);
-  D_y_arg = complex<double>(third_part,-second_part);
-
-
-double A_y=cos(argument_of_trig_fns)*imag(Faddeeva::erf(A_y_arg))*B_Nuss_0;
-double B_y=cos(argument_of_trig_fns)*imag(Faddeeva::erf(B_y_arg))*B_Nuss_0;
-double C_y=sin(argument_of_trig_fns)*real(Faddeeva::erf(C_y_arg))*B_Nuss_0;
-double D_y=sin(argument_of_trig_fns)*real(Faddeeva::erf(A_y_arg))*B_Nuss_0;
-double E_y=sin(argument_of_trig_fns)*real(Faddeeva::erf(D_y_arg))*B_Nuss_0;
-double F_y=sin(argument_of_trig_fns)*real(Faddeeva::erf(B_y_arg))*B_Nuss_0;
-double G_y=cos(argument_of_trig_fns)*real(Faddeeva::erf(D_y_arg))*Beta_m[m];
-double H_y=cos(argument_of_trig_fns)*real(Faddeeva::erf(C_y_arg))*Beta_m[m];
-double I_y=cos(argument_of_trig_fns)*real(Faddeeva::erf(A_y_arg))*Beta_m[m];
-double J_y=cos(argument_of_trig_fns)*real(Faddeeva::erf(B_y_arg))*Beta_m[m];
-double K_y=sin(argument_of_trig_fns)*imag(Faddeeva::erf(A_y_arg))*Beta_m[m];
-double L_y=sin(argument_of_trig_fns)*imag(Faddeeva::erf(B_y_arg))*Beta_m[m];
+  A_y_arg = std::complex<double>(first_part,-second_part);
+  B_y_arg = std::complex<double>(first_part,second_part);
+  C_y_arg = std::complex<double>(third_part,second_part);
+  D_y_arg = std::complex<double>(third_part,-second_part);
 
 
-double Omegla=(-A_y)+(B_y)+(C_y)+(D_y)+(E_y)+(F_y)+(G_y)+(H_y)+(I_y)+(J_y)+(K_y)-(L_y)+(imag(Faddeeva::erf(C_y_arg))*((-1*cos(argument_of_trig_fns)*B_Nuss_0)+(sin(argument_of_trig_fns)*Beta_m[m])))+(imag(Faddeeva::erf(D_y_arg))*((cos(argument_of_trig_fns)*B_Nuss_0)-(sin(argument_of_trig_fns)*Beta_m[m])));
+double A_y=std::cos(argument_of_trig_fns)*imag(Faddeeva::erf(A_y_arg))*B_Nuss_0;
+double B_y=std::cos(argument_of_trig_fns)*imag(Faddeeva::erf(B_y_arg))*B_Nuss_0;
+double C_y=std::sin(argument_of_trig_fns)*real(Faddeeva::erf(C_y_arg))*B_Nuss_0;
+double D_y=std::sin(argument_of_trig_fns)*real(Faddeeva::erf(A_y_arg))*B_Nuss_0;
+double E_y=std::sin(argument_of_trig_fns)*real(Faddeeva::erf(D_y_arg))*B_Nuss_0;
+double F_y=std::sin(argument_of_trig_fns)*real(Faddeeva::erf(B_y_arg))*B_Nuss_0;
+double G_y=std::cos(argument_of_trig_fns)*real(Faddeeva::erf(D_y_arg))*Beta_m[m];
+double H_y=std::cos(argument_of_trig_fns)*real(Faddeeva::erf(C_y_arg))*Beta_m[m];
+double I_y=std::cos(argument_of_trig_fns)*real(Faddeeva::erf(A_y_arg))*Beta_m[m];
+double J_y=std::cos(argument_of_trig_fns)*real(Faddeeva::erf(B_y_arg))*Beta_m[m];
+double K_y=std::sin(argument_of_trig_fns)*imag(Faddeeva::erf(A_y_arg))*Beta_m[m];
+double L_y=std::sin(argument_of_trig_fns)*imag(Faddeeva::erf(B_y_arg))*Beta_m[m];
+
+
+double Omegla=(-A_y)+(B_y)+(C_y)+(D_y)+(E_y)+(F_y)+(G_y)+(H_y)+(I_y)+(J_y)+(K_y)-(L_y)+(imag(Faddeeva::erf(C_y_arg))*((-1*std::cos(argument_of_trig_fns)*B_Nuss_0)+(std::sin(argument_of_trig_fns)*Beta_m[m])))+(imag(Faddeeva::erf(D_y_arg))*((std::cos(argument_of_trig_fns)*B_Nuss_0)-(std::sin(argument_of_trig_fns)*Beta_m[m])));
 double denominator=(2*D*((B_Nuss_0*(ThermalA::intpow(B_Nuss_D,2)+ThermalA::intpow(Beta_m[m],2)))+(ThermalA::intpow(B_Nuss_0,2)*(B_Nuss_D+ThermalA::intpow(B_Nuss_D,2)+ThermalA::intpow(Beta_m[m],2)))+(ThermalA::intpow(Beta_m[m],2)*(B_Nuss_D+ThermalA::intpow(B_Nuss_D,2)+ThermalA::intpow(Beta_m[m],2)))));
-//double Omegla=(2*cos((Beta_m[m]*(ThermalA::intpow(D,2)-(D*d_g)))/(ThermalA::intpow(D,2)))*ThermalA::erf((6.00*(ThermalA::intpow(D,2)-(D*d_g)))/(2*sqrt(3.00)*b*D)))+(2*Faddeeva::erfi((b*Beta_m[m])/(2*sqrt(3.00)*D))*sin((Beta_m[m]*(ThermalA::intpow(D,2)-(D*d_g)))/(ThermalA::intpow(D,2))));
-//double numerator=2*b*(exp(-1*((pow(Beta_m[m],2.00)*(pow(b,2.00)+(12*alpha*(t-t_prime))))/(12*pow(D,2.00)))))*(sqrt(pi/3.00))*(ThermalA::intpow(B_Nuss,2)+ThermalA::intpow(Beta_m[m],2))*(cos(Beta_m[m]-((y*Beta_m[m])/D)));
-double numerator=b*exp(-((ThermalA::intpow(Beta_m[m],2)*(ThermalA::intpow(b,2)+(12*alpha*(t-t_prime))))/(12*ThermalA::intpow(D,2))))*sqrt(pi/3.00)*((sin((y*Beta_m[m])/(D))*B_Nuss_0)+(cos((y*Beta_m[m])/(D))*Beta_m[m]))*(ThermalA::intpow(B_Nuss_D,2)+ThermalA::intpow(Beta_m[m],2))*Omegla;
+//double Omegla=(2*std::cos((Beta_m[m]*(ThermalA::intpow(D,2)-(D*d_g)))/(ThermalA::intpow(D,2)))*ThermalA::erf((6.00*(ThermalA::intpow(D,2)-(D*d_g)))/(2*std::sqrt(3.00)*b*D)))+(2*Faddeeva::erfi((b*Beta_m[m])/(2*std::sqrt(3.00)*D))*std::sin((Beta_m[m]*(ThermalA::intpow(D,2)-(D*d_g)))/(ThermalA::intpow(D,2))));
+//double numerator=2*b*(std::exp(-1*((pow(Beta_m[m],2.00)*(pow(b,2.00)+(12*alpha*(t-t_prime))))/(12*pow(D,2.00)))))*(std::sqrt(pi/3.00))*(ThermalA::intpow(B_Nuss,2)+ThermalA::intpow(Beta_m[m],2))*(std::cos(Beta_m[m]-((y*Beta_m[m])/D)));
+double numerator=b*std::exp(-((ThermalA::intpow(Beta_m[m],2)*(ThermalA::intpow(b,2)+(12*alpha*(t-t_prime))))/(12*ThermalA::intpow(D,2))))*std::sqrt(pi/3.00)*((std::sin((y*Beta_m[m])/(D))*B_Nuss_0)+(std::cos((y*Beta_m[m])/(D))*Beta_m[m]))*(ThermalA::intpow(B_Nuss_D,2)+ThermalA::intpow(Beta_m[m],2))*Omegla;
 double inc=numerator/denominator;
 
 Y33+=((numerator)/denominator);
@@ -816,41 +816,41 @@ for(int m=0;m<228;m++){//64
 double argument_of_trig_fns=Beta_m[m]*(b_g/B);
 //double argument_of_trig_fns2=Beta_m[m]-((Beta_m[m]*d_g)/(D));
 
-complex<double> A_y_arg;
-complex<double> B_y_arg;
-complex<double> C_y_arg;
-complex<double> D_y_arg;
+std::complex<double> A_y_arg;
+std::complex<double> B_y_arg;
+std::complex<double> C_y_arg;
+std::complex<double> D_y_arg;
 
 
-double first_part=(b_g*sqrt(3.00))/(a);//for
-double second_part=(a*Beta_m[m])/(2*sqrt(3.00)*B);//for
-double third_part=(6*(ThermalA::intpow(B,2)-(B*b_g)))/(2*sqrt(3.00)*a*B);//for
+double first_part=(b_g*std::sqrt(3.00))/(a);//for
+double second_part=(a*Beta_m[m])/(2*std::sqrt(3.00)*B);//for
+double third_part=(6*(ThermalA::intpow(B,2)-(B*b_g)))/(2*std::sqrt(3.00)*a*B);//for
 
-  A_y_arg = complex<double>(first_part,-second_part);
-  B_y_arg = complex<double>(first_part,second_part);
-  C_y_arg = complex<double>(third_part,second_part);
-  D_y_arg = complex<double>(third_part,-second_part);
-
-
-double A_y=cos(argument_of_trig_fns)*imag(Faddeeva::erf(A_y_arg))*B_Nuss_0;
-double B_y=cos(argument_of_trig_fns)*imag(Faddeeva::erf(B_y_arg))*B_Nuss_0;
-double C_y=sin(argument_of_trig_fns)*real(Faddeeva::erf(C_y_arg))*B_Nuss_0;
-double D_y=sin(argument_of_trig_fns)*real(Faddeeva::erf(A_y_arg))*B_Nuss_0;
-double E_y=sin(argument_of_trig_fns)*real(Faddeeva::erf(D_y_arg))*B_Nuss_0;
-double F_y=sin(argument_of_trig_fns)*real(Faddeeva::erf(B_y_arg))*B_Nuss_0;
-double G_y=cos(argument_of_trig_fns)*real(Faddeeva::erf(D_y_arg))*Beta_m[m];
-double H_y=cos(argument_of_trig_fns)*real(Faddeeva::erf(C_y_arg))*Beta_m[m];
-double I_y=cos(argument_of_trig_fns)*real(Faddeeva::erf(A_y_arg))*Beta_m[m];
-double J_y=cos(argument_of_trig_fns)*real(Faddeeva::erf(B_y_arg))*Beta_m[m];
-double K_y=sin(argument_of_trig_fns)*imag(Faddeeva::erf(A_y_arg))*Beta_m[m];
-double L_y=sin(argument_of_trig_fns)*imag(Faddeeva::erf(B_y_arg))*Beta_m[m];
+  A_y_arg = std::complex<double>(first_part,-second_part);
+  B_y_arg = std::complex<double>(first_part,second_part);
+  C_y_arg = std::complex<double>(third_part,second_part);
+  D_y_arg = std::complex<double>(third_part,-second_part);
 
 
-double Omegla=(-A_y)+(B_y)+(C_y)+(D_y)+(E_y)+(F_y)+(G_y)+(H_y)+(I_y)+(J_y)+(K_y)-(L_y)+(imag(Faddeeva::erf(C_y_arg))*((-1*cos(argument_of_trig_fns)*B_Nuss_0)+(sin(argument_of_trig_fns)*Beta_m[m])))+(imag(Faddeeva::erf(D_y_arg))*((cos(argument_of_trig_fns)*B_Nuss_0)-(sin(argument_of_trig_fns)*Beta_m[m])));
+double A_y=std::cos(argument_of_trig_fns)*imag(Faddeeva::erf(A_y_arg))*B_Nuss_0;
+double B_y=std::cos(argument_of_trig_fns)*imag(Faddeeva::erf(B_y_arg))*B_Nuss_0;
+double C_y=std::sin(argument_of_trig_fns)*real(Faddeeva::erf(C_y_arg))*B_Nuss_0;
+double D_y=std::sin(argument_of_trig_fns)*real(Faddeeva::erf(A_y_arg))*B_Nuss_0;
+double E_y=std::sin(argument_of_trig_fns)*real(Faddeeva::erf(D_y_arg))*B_Nuss_0;
+double F_y=std::sin(argument_of_trig_fns)*real(Faddeeva::erf(B_y_arg))*B_Nuss_0;
+double G_y=std::cos(argument_of_trig_fns)*real(Faddeeva::erf(D_y_arg))*Beta_m[m];
+double H_y=std::cos(argument_of_trig_fns)*real(Faddeeva::erf(C_y_arg))*Beta_m[m];
+double I_y=std::cos(argument_of_trig_fns)*real(Faddeeva::erf(A_y_arg))*Beta_m[m];
+double J_y=std::cos(argument_of_trig_fns)*real(Faddeeva::erf(B_y_arg))*Beta_m[m];
+double K_y=std::sin(argument_of_trig_fns)*imag(Faddeeva::erf(A_y_arg))*Beta_m[m];
+double L_y=std::sin(argument_of_trig_fns)*imag(Faddeeva::erf(B_y_arg))*Beta_m[m];
+
+
+double Omegla=(-A_y)+(B_y)+(C_y)+(D_y)+(E_y)+(F_y)+(G_y)+(H_y)+(I_y)+(J_y)+(K_y)-(L_y)+(imag(Faddeeva::erf(C_y_arg))*((-1*std::cos(argument_of_trig_fns)*B_Nuss_0)+(std::sin(argument_of_trig_fns)*Beta_m[m])))+(imag(Faddeeva::erf(D_y_arg))*((std::cos(argument_of_trig_fns)*B_Nuss_0)-(std::sin(argument_of_trig_fns)*Beta_m[m])));
 double denominator=(2*B*((B_Nuss_0*(ThermalA::intpow(B_Nuss_B,2)+ThermalA::intpow(Beta_m[m],2)))+(ThermalA::intpow(B_Nuss_0,2)*(B_Nuss_B+ThermalA::intpow(B_Nuss_B,2)+ThermalA::intpow(Beta_m[m],2)))+(ThermalA::intpow(Beta_m[m],2)*(B_Nuss_B+ThermalA::intpow(B_Nuss_B,2)+ThermalA::intpow(Beta_m[m],2)))));
-//double Omegla=(2*cos((Beta_m[m]*(ThermalA::intpow(D,2)-(D*d_g)))/(ThermalA::intpow(D,2)))*ThermalA::erf((6.00*(ThermalA::intpow(D,2)-(D*d_g)))/(2*sqrt(3.00)*b*D)))+(2*Faddeeva::erfi((b*Beta_m[m])/(2*sqrt(3.00)*D))*sin((Beta_m[m]*(ThermalA::intpow(D,2)-(D*d_g)))/(ThermalA::intpow(D,2))));
-//double numerator=2*b*(exp(-1*((pow(Beta_m[m],2.00)*(pow(b,2.00)+(12*alpha*(t-t_prime))))/(12*pow(D,2.00)))))*(sqrt(pi/3.00))*(ThermalA::intpow(B_Nuss,2)+ThermalA::intpow(Beta_m[m],2))*(cos(Beta_m[m]-((y*Beta_m[m])/D)));
-double numerator=a*exp(-((ThermalA::intpow(Beta_m[m],2)*(ThermalA::intpow(a,2)+(12*alpha*(t-t_prime))))/(12*ThermalA::intpow(B,2))))*sqrt(pi/3.00)*((sin((x*Beta_m[m])/(B))*B_Nuss_0)+(cos((x*Beta_m[m])/(B))*Beta_m[m]))*(ThermalA::intpow(B_Nuss_B,2)+ThermalA::intpow(Beta_m[m],2))*Omegla;
+//double Omegla=(2*std::cos((Beta_m[m]*(ThermalA::intpow(D,2)-(D*d_g)))/(ThermalA::intpow(D,2)))*ThermalA::erf((6.00*(ThermalA::intpow(D,2)-(D*d_g)))/(2*std::sqrt(3.00)*b*D)))+(2*Faddeeva::erfi((b*Beta_m[m])/(2*std::sqrt(3.00)*D))*std::sin((Beta_m[m]*(ThermalA::intpow(D,2)-(D*d_g)))/(ThermalA::intpow(D,2))));
+//double numerator=2*b*(std::exp(-1*((pow(Beta_m[m],2.00)*(pow(b,2.00)+(12*alpha*(t-t_prime))))/(12*pow(D,2.00)))))*(std::sqrt(pi/3.00))*(ThermalA::intpow(B_Nuss,2)+ThermalA::intpow(Beta_m[m],2))*(std::cos(Beta_m[m]-((y*Beta_m[m])/D)));
+double numerator=a*std::exp(-((ThermalA::intpow(Beta_m[m],2)*(ThermalA::intpow(a,2)+(12*alpha*(t-t_prime))))/(12*ThermalA::intpow(B,2))))*std::sqrt(pi/3.00)*((std::sin((x*Beta_m[m])/(B))*B_Nuss_0)+(std::cos((x*Beta_m[m])/(B))*Beta_m[m]))*(ThermalA::intpow(B_Nuss_B,2)+ThermalA::intpow(Beta_m[m],2))*Omegla;
 
 
 X33=X33+((numerator)/denominator);
@@ -937,42 +937,42 @@ for(int m=0;m<228;m++){//64
 double argument_of_trig_fn=Beta_m[m]*((v_arc*t_prime)/L);
 //double argument_of_trig_fns2=Beta_m[m]-((Beta_m[m]*d_g)/(D));
 
-complex<double> A_z_arg;
-complex<double> B_z_arg;
-complex<double> C_z_arg;
+std::complex<double> A_z_arg;
+std::complex<double> B_z_arg;
+std::complex<double> C_z_arg;
 
 
 
-double first_part=(6*t_prime*v_arc)/(2.0*sqrt(3.00)*cr);//for
-double second_part=(cr*Beta_m[m])/(2.0*sqrt(3.00)*L);//for
+double first_part=(6*t_prime*v_arc)/(2.0*std::sqrt(3.00)*cr);//for
+double second_part=(cr*Beta_m[m])/(2.0*std::sqrt(3.00)*L);//for
 
 
-  A_z_arg = complex<double>(second_part,-first_part);
-  B_z_arg = complex<double>(second_part,0);
-  C_z_arg = complex<double>(first_part,-second_part);
+  A_z_arg = std::complex<double>(second_part,-first_part);
+  B_z_arg = std::complex<double>(second_part,0);
+  C_z_arg = std::complex<double>(first_part,-second_part);
 
 
-double A_z=cos(argument_of_trig_fn)*real(Faddeeva::erfi(A_z_arg))*B_Nuss_0;
-double B_z=sin(argument_of_trig_fn)*imag(Faddeeva::erfi(B_z_arg))*B_Nuss_0;
-double C_z=sin(argument_of_trig_fn)*real(Faddeeva::erf(C_z_arg))*B_Nuss_0;
-double D_z=sin(argument_of_trig_fn)*imag(Faddeeva::erfi(B_z_arg))*B_Nuss_0;
-double E_z=sin(argument_of_trig_fn)*imag(Faddeeva::erfi(A_z_arg))*B_Nuss_0;
-double F_z=cos(argument_of_trig_fn)*imag(Faddeeva::erfi(B_z_arg))*Beta_m[m];
-double G_z=cos(argument_of_trig_fn)*imag(Faddeeva::erfi(B_z_arg))*Beta_m[m];
-double H_z=cos(argument_of_trig_fn)*imag(Faddeeva::erfi(A_z_arg))*Beta_m[m];
-double I_z=cos(argument_of_trig_fn)*real(Faddeeva::erf(C_z_arg))*Beta_m[m];
-double J_z=sin(argument_of_trig_fn)*real(Faddeeva::erfi(A_z_arg))*Beta_m[m];
+double A_z=std::cos(argument_of_trig_fn)*real(Faddeeva::erfi(A_z_arg))*B_Nuss_0;
+double B_z=std::sin(argument_of_trig_fn)*imag(Faddeeva::erfi(B_z_arg))*B_Nuss_0;
+double C_z=std::sin(argument_of_trig_fn)*real(Faddeeva::erf(C_z_arg))*B_Nuss_0;
+double D_z=std::sin(argument_of_trig_fn)*imag(Faddeeva::erfi(B_z_arg))*B_Nuss_0;
+double E_z=std::sin(argument_of_trig_fn)*imag(Faddeeva::erfi(A_z_arg))*B_Nuss_0;
+double F_z=std::cos(argument_of_trig_fn)*imag(Faddeeva::erfi(B_z_arg))*Beta_m[m];
+double G_z=std::cos(argument_of_trig_fn)*imag(Faddeeva::erfi(B_z_arg))*Beta_m[m];
+double H_z=std::cos(argument_of_trig_fn)*imag(Faddeeva::erfi(A_z_arg))*Beta_m[m];
+double I_z=std::cos(argument_of_trig_fn)*real(Faddeeva::erf(C_z_arg))*Beta_m[m];
+double J_z=std::sin(argument_of_trig_fn)*real(Faddeeva::erfi(A_z_arg))*Beta_m[m];
 
 
 
-double Omegla=(A_z-B_z+C_z+D_z-E_z-F_z+G_z-H_z+I_z-J_z)+(imag(Faddeeva::erf(C_z_arg))*((sin(argument_of_trig_fn)*Beta_m[m])-(cos(argument_of_trig_fn)*B_Nuss_0)))+((real(Faddeeva::erfi(B_z_arg)))*((2*sin(argument_of_trig_fn)*Beta_m[m])-(2*cos(argument_of_trig_fn)*B_Nuss_0)));
+double Omegla=(A_z-B_z+C_z+D_z-E_z-F_z+G_z-H_z+I_z-J_z)+(imag(Faddeeva::erf(C_z_arg))*((std::sin(argument_of_trig_fn)*Beta_m[m])-(std::cos(argument_of_trig_fn)*B_Nuss_0)))+((real(Faddeeva::erfi(B_z_arg)))*((2*std::sin(argument_of_trig_fn)*Beta_m[m])-(2*std::cos(argument_of_trig_fn)*B_Nuss_0)));
 double denominator=(2*L*((B_Nuss_0*(ThermalA::intpow(B_Nuss_L,2)+ThermalA::intpow(Beta_m[m],2)))+(ThermalA::intpow(B_Nuss_0,2)*(B_Nuss_L+ThermalA::intpow(B_Nuss_L,2)+ThermalA::intpow(Beta_m[m],2)))+(ThermalA::intpow(Beta_m[m],2)*(B_Nuss_L+ThermalA::intpow(B_Nuss_L,2)+ThermalA::intpow(Beta_m[m],2)))));
-double numerator=(exp(-((ThermalA::intpow(Beta_m[m],2)*((ThermalA::intpow(cr,2))+(12*alpha*(t-t_prime))))/(12*ThermalA::intpow(L,2))))*sqrt(pi/3.00)*cr*((sin((z*Beta_m[m])/(L))*B_Nuss_0)+(cos((z*Beta_m[m])/(L))*Beta_m[m]))*(ThermalA::intpow(B_Nuss_L,2)+ThermalA::intpow(Beta_m[m],2)))*Omegla;
+double numerator=(std::exp(-((ThermalA::intpow(Beta_m[m],2)*((ThermalA::intpow(cr,2))+(12*alpha*(t-t_prime))))/(12*ThermalA::intpow(L,2))))*std::sqrt(pi/3.00)*cr*((std::sin((z*Beta_m[m])/(L))*B_Nuss_0)+(std::cos((z*Beta_m[m])/(L))*Beta_m[m]))*(ThermalA::intpow(B_Nuss_L,2)+ThermalA::intpow(Beta_m[m],2)))*Omegla;
 
 
 
 Z33=Z33+((numerator)/denominator);
-//Z33=exp(-((ThermalA::intpow(Beta_m[m],2)*((ThermalA::intpow(cr,2))+(12*alpha*(t-t_prime))))/(12*ThermalA::intpow(L,2))));
+//Z33=std::exp(-((ThermalA::intpow(Beta_m[m],2)*((ThermalA::intpow(cr,2))+(12*alpha*(t-t_prime))))/(12*ThermalA::intpow(L,2))));
 //cout<<Y33<<endl;
 }
 
@@ -1057,46 +1057,46 @@ for(int m=0;m<228;m++){//64
 double argument_of_trig_fn=Beta_m[m]*((v_arc*t_prime)/L);
 //double argument_of_trig_fns2=Beta_m[m]-((Beta_m[m]*d_g)/(D));
 
-complex<double> A_z_arg;
-complex<double> B_z_arg;
-complex<double> C_z_arg;
+std::complex<double> A_z_arg;
+std::complex<double> B_z_arg;
+std::complex<double> C_z_arg;
 
 
 
-double first_part=(6*(L-(v_arc*t_prime)))/(2.0*sqrt(3.00)*cf);//for
-double second_part=(cf*Beta_m[m])/(2.0*sqrt(3.00)*L);//for
+double first_part=(6*(L-(v_arc*t_prime)))/(2.0*std::sqrt(3.00)*cf);//for
+double second_part=(cf*Beta_m[m])/(2.0*std::sqrt(3.00)*L);//for
 
 
-  A_z_arg = complex<double>(second_part,0);
-  B_z_arg = complex<double>(first_part,second_part);
-  C_z_arg = complex<double>(first_part,-second_part);
+  A_z_arg = std::complex<double>(second_part,0);
+  B_z_arg = std::complex<double>(first_part,second_part);
+  C_z_arg = std::complex<double>(first_part,-second_part);
 
 
-double A_z=cos(argument_of_trig_fn)*real(Faddeeva::erfi(A_z_arg))*B_Nuss_0;
-double B_z=cos(argument_of_trig_fn)*real(Faddeeva::erfi(A_z_arg))*B_Nuss_0;
-double C_z=sin(argument_of_trig_fn)*imag(Faddeeva::erfi(A_z_arg))*B_Nuss_0;
-double D_z=sin(argument_of_trig_fn)*real(Faddeeva::erf(B_z_arg))*B_Nuss_0;
+double A_z=std::cos(argument_of_trig_fn)*real(Faddeeva::erfi(A_z_arg))*B_Nuss_0;
+double B_z=std::cos(argument_of_trig_fn)*real(Faddeeva::erfi(A_z_arg))*B_Nuss_0;
+double C_z=std::sin(argument_of_trig_fn)*imag(Faddeeva::erfi(A_z_arg))*B_Nuss_0;
+double D_z=std::sin(argument_of_trig_fn)*real(Faddeeva::erf(B_z_arg))*B_Nuss_0;
 
-double E_z=sin(argument_of_trig_fn)*imag(Faddeeva::erfi(A_z_arg))*B_Nuss_0;
-double F_z=sin(argument_of_trig_fn)*real(Faddeeva::erf(C_z_arg))*B_Nuss_0;
-double G_z=cos(argument_of_trig_fn)*imag(Faddeeva::erfi(A_z_arg))*Beta_m[m];
-double H_z=cos(argument_of_trig_fn)*imag(Faddeeva::erfi(A_z_arg))*Beta_m[m];
+double E_z=std::sin(argument_of_trig_fn)*imag(Faddeeva::erfi(A_z_arg))*B_Nuss_0;
+double F_z=std::sin(argument_of_trig_fn)*real(Faddeeva::erf(C_z_arg))*B_Nuss_0;
+double G_z=std::cos(argument_of_trig_fn)*imag(Faddeeva::erfi(A_z_arg))*Beta_m[m];
+double H_z=std::cos(argument_of_trig_fn)*imag(Faddeeva::erfi(A_z_arg))*Beta_m[m];
 
-double I_z=cos(argument_of_trig_fn)*real(Faddeeva::erf(C_z_arg))*Beta_m[m];
-double J_z=cos(argument_of_trig_fn)*real(Faddeeva::erf(B_z_arg))*Beta_m[m];
-double K_z=sin(argument_of_trig_fn)*real(Faddeeva::erfi(A_z_arg))*Beta_m[m];
+double I_z=std::cos(argument_of_trig_fn)*real(Faddeeva::erf(C_z_arg))*Beta_m[m];
+double J_z=std::cos(argument_of_trig_fn)*real(Faddeeva::erf(B_z_arg))*Beta_m[m];
+double K_z=std::sin(argument_of_trig_fn)*real(Faddeeva::erfi(A_z_arg))*Beta_m[m];
 
-double L_z=sin(argument_of_trig_fn)*real(Faddeeva::erfi(A_z_arg))*Beta_m[m];
+double L_z=std::sin(argument_of_trig_fn)*real(Faddeeva::erfi(A_z_arg))*Beta_m[m];
 
 
-double Omegla=(A_z+B_z+C_z+D_z-E_z+F_z+G_z-H_z+I_z+J_z-K_z-L_z)+(imag(Faddeeva::erf(B_z_arg))*((sin(argument_of_trig_fn)*Beta_m[m])-(cos(argument_of_trig_fn)*B_Nuss_0)))+((imag(Faddeeva::erf(C_z_arg)))*((cos(argument_of_trig_fn)*B_Nuss_0)-(sin(argument_of_trig_fn)*Beta_m[m])));
+double Omegla=(A_z+B_z+C_z+D_z-E_z+F_z+G_z-H_z+I_z+J_z-K_z-L_z)+(imag(Faddeeva::erf(B_z_arg))*((std::sin(argument_of_trig_fn)*Beta_m[m])-(std::cos(argument_of_trig_fn)*B_Nuss_0)))+((imag(Faddeeva::erf(C_z_arg)))*((std::cos(argument_of_trig_fn)*B_Nuss_0)-(std::sin(argument_of_trig_fn)*Beta_m[m])));
 double denominator=(2*L*((B_Nuss_0*(ThermalA::intpow(B_Nuss_L,2)+ThermalA::intpow(Beta_m[m],2)))+(ThermalA::intpow(B_Nuss_0,2)*(B_Nuss_L+ThermalA::intpow(B_Nuss_L,2)+ThermalA::intpow(Beta_m[m],2)))+(ThermalA::intpow(Beta_m[m],2)*(B_Nuss_L+ThermalA::intpow(B_Nuss_L,2)+ThermalA::intpow(Beta_m[m],2)))));
-double numerator=(exp(-((ThermalA::intpow(Beta_m[m],2)*((ThermalA::intpow(cf,2))+(12*alpha*(t-t_prime))))/(12*ThermalA::intpow(L,2))))*sqrt(pi/3.00)*cf*((sin((z*Beta_m[m])/(L))*B_Nuss_0)+(cos((z*Beta_m[m])/(L))*Beta_m[m]))*(ThermalA::intpow(B_Nuss_L,2)+ThermalA::intpow(Beta_m[m],2)))*Omegla;
+double numerator=(std::exp(-((ThermalA::intpow(Beta_m[m],2)*((ThermalA::intpow(cf,2))+(12*alpha*(t-t_prime))))/(12*ThermalA::intpow(L,2))))*std::sqrt(pi/3.00)*cf*((std::sin((z*Beta_m[m])/(L))*B_Nuss_0)+(std::cos((z*Beta_m[m])/(L))*Beta_m[m]))*(ThermalA::intpow(B_Nuss_L,2)+ThermalA::intpow(Beta_m[m],2)))*Omegla;
 
 
 
 Z33=Z33+((numerator)/denominator);
-//Z33=exp(-((ThermalA::intpow(Beta_m[m],2)*((12*alpha*(t-t_prime))+(ThermalA::intpow(cf,2))))/(12*ThermalA::intpow(L,2))));
+//Z33=std::exp(-((ThermalA::intpow(Beta_m[m],2)*((12*alpha*(t-t_prime))+(ThermalA::intpow(cf,2))))/(12*ThermalA::intpow(L,2))));
 //cout<<Y33<<endl;
 }
 //if(isnan(Z33)==1){
@@ -1145,7 +1145,7 @@ FINITE_plate_to_be_integrated_with_ramping_CONVECTION_ON_ALL_SURFACES W_piece1;/
 W_piece1.set_values(x,y,z,a,b,cr,cf,t,k_conductivity,density,cp_steel,v_arc,B,D,L,ts,tf,r_start,r_fall,b_g,d_g);
 integral=DEIntegrator<FINITE_plate_to_be_integrated_with_ramping_CONVECTION_ON_ALL_SURFACES>::Integrate(W_piece1, 0, t, 1e-20);
 
-double Temperature_convec_all_surfaces=(T_0+(integral*((voltage*current*eff*6*sqrt(3.00))/(a*b*pi*sqrt(pi)*density*cp_steel))));
+double Temperature_convec_all_surfaces=(T_0+(integral*((voltage*current*eff*6*std::sqrt(3.00))/(a*b*pi*std::sqrt(pi)*density*cp_steel))));
 
 return Temperature_convec_all_surfaces;
 }
@@ -1173,15 +1173,15 @@ double x_DE_part_HS_at_bg(double k_conductivity, double cp_steel, double density
 double alpha=((k_conductivity)/(cp_steel*density));
 double X22=0;
 
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt(ThermalA::intpow(a,2)+(12*t*alpha)-(12*t_prime*alpha));
-double erf_denom=2*a*sqrt(alpha)*sqrt(t-t_prime)*sqrt(ThermalA::intpow(a,2)+(12*t*alpha)-(12*t_prime*alpha));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt(ThermalA::intpow(a,2)+(12*t*alpha)-(12*t_prime*alpha));
+double erf_denom=2*a*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt(ThermalA::intpow(a,2)+(12*t*alpha)-(12*t_prime*alpha));
 for(int n=-5;n<=5;n+=1){
 
 
 
-double portion_1=exp(-((3*ThermalA::intpow((-b_g+(2*B*n)+x),2))/(ThermalA::intpow(a,2)+(12*t*alpha)-(12*t_prime*alpha))))*(-ThermalA::erf(((ThermalA::intpow(a,2)*((B*(-1+(2*n)))+x))+(12*(-B+b_g)*t*alpha)+(12*(B-b_g)*alpha*t_prime))/erf_denom)+ThermalA::erf(((ThermalA::intpow(a,2)*((2*B*n)+x))+(12*b_g*alpha*(t-t_prime)))/erf_denom));
-double portion_2=exp(-(3*ThermalA::intpow((b_g+(2*B*n)+x),2))/(ThermalA::intpow(a,2)+(12*t*alpha)-(12*t_prime*alpha)))*(ThermalA::erf(((ThermalA::intpow(a,2)*(B+(2+B+n)+x))+(12*(B-b_g)*t*alpha)-(12*(B-b_g)*alpha*t_prime))/erf_denom)-ThermalA::erf(((ThermalA::intpow(a,2)*((2*B*n)+x))-(12*b_g*alpha*(t-t_prime)))/erf_denom));
-double numerator=a*sqrt(alpha)*sqrt(t-t_prime)*(portion_1+portion_2);
+double portion_1=std::exp(-((3*ThermalA::intpow((-b_g+(2*B*n)+x),2))/(ThermalA::intpow(a,2)+(12*t*alpha)-(12*t_prime*alpha))))*(-ThermalA::erf(((ThermalA::intpow(a,2)*((B*(-1+(2*n)))+x))+(12*(-B+b_g)*t*alpha)+(12*(B-b_g)*alpha*t_prime))/erf_denom)+ThermalA::erf(((ThermalA::intpow(a,2)*((2*B*n)+x))+(12*b_g*alpha*(t-t_prime)))/erf_denom));
+double portion_2=std::exp(-(3*ThermalA::intpow((b_g+(2*B*n)+x),2))/(ThermalA::intpow(a,2)+(12*t*alpha)-(12*t_prime*alpha)))*(ThermalA::erf(((ThermalA::intpow(a,2)*(B+(2+B+n)+x))+(12*(B-b_g)*t*alpha)-(12*(B-b_g)*alpha*t_prime))/erf_denom)-ThermalA::erf(((ThermalA::intpow(a,2)*((2*B*n)+x))-(12*b_g*alpha*(t-t_prime)))/erf_denom));
+double numerator=a*std::sqrt(alpha)*std::sqrt(t-t_prime)*(portion_1+portion_2);
 
 
 double int_X22=numerator/denominator;
@@ -1197,15 +1197,15 @@ double x_DE_part_HS_at_bg_insulating_at_0_dirichlet_at_B(double k_conductivity, 
 double alpha=((k_conductivity)/(cp_steel*density));
 double X22=0;
 
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt(ThermalA::intpow(a,2)+(12*t*alpha)-(12*t_prime*alpha));
-double erf_denom=2*a*sqrt(alpha)*sqrt(t-t_prime)*sqrt(ThermalA::intpow(a,2)+(12*t*alpha)-(12*t_prime*alpha));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt(ThermalA::intpow(a,2)+(12*t*alpha)-(12*t_prime*alpha));
+double erf_denom=2*a*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt(ThermalA::intpow(a,2)+(12*t*alpha)-(12*t_prime*alpha));
 for(int n=-5;n<=5;n+=1){
 
 
 
-double portion_1=exp(-((3*ThermalA::intpow((-b_g+(2*B*n)+x),2))/(ThermalA::intpow(a,2)+(12*t*alpha)-(12*t_prime*alpha))))*(-ThermalA::erf(((ThermalA::intpow(a,2)*((B*(-1+(2*n)))+x))+(12*(-B+b_g)*t*alpha)+(12*(B-b_g)*alpha*t_prime))/erf_denom)+ThermalA::erf(((ThermalA::intpow(a,2)*((2*B*n)+x))+(12*b_g*alpha*(t-t_prime)))/erf_denom));
-double portion_2=exp(-(3*ThermalA::intpow((b_g+(2*B*n)+x),2))/(ThermalA::intpow(a,2)+(12*t*alpha)-(12*t_prime*alpha)))*(ThermalA::erf(((ThermalA::intpow(a,2)*(B+(2+B+n)+x))+(12*(B-b_g)*t*alpha)-(12*(B-b_g)*alpha*t_prime))/erf_denom)-ThermalA::erf(((ThermalA::intpow(a,2)*((2*B*n)+x))-(12*b_g*alpha*(t-t_prime)))/erf_denom));
-double numerator=(pow(-1.0,n))*a*sqrt(alpha)*sqrt(t-t_prime)*(portion_1+portion_2);
+double portion_1=std::exp(-((3*ThermalA::intpow((-b_g+(2*B*n)+x),2))/(ThermalA::intpow(a,2)+(12*t*alpha)-(12*t_prime*alpha))))*(-ThermalA::erf(((ThermalA::intpow(a,2)*((B*(-1+(2*n)))+x))+(12*(-B+b_g)*t*alpha)+(12*(B-b_g)*alpha*t_prime))/erf_denom)+ThermalA::erf(((ThermalA::intpow(a,2)*((2*B*n)+x))+(12*b_g*alpha*(t-t_prime)))/erf_denom));
+double portion_2=std::exp(-(3*ThermalA::intpow((b_g+(2*B*n)+x),2))/(ThermalA::intpow(a,2)+(12*t*alpha)-(12*t_prime*alpha)))*(ThermalA::erf(((ThermalA::intpow(a,2)*(B+(2+B+n)+x))+(12*(B-b_g)*t*alpha)-(12*(B-b_g)*alpha*t_prime))/erf_denom)-ThermalA::erf(((ThermalA::intpow(a,2)*((2*B*n)+x))-(12*b_g*alpha*(t-t_prime)))/erf_denom));
+double numerator=(pow(-1.0,n))*a*std::sqrt(alpha)*std::sqrt(t-t_prime)*(portion_1+portion_2);
 
 
 double int_X22=numerator/denominator;
@@ -1220,15 +1220,15 @@ double x_DE_part_HS_at_bg_dirichlet_at_0_dirichlet_at_B(double k_conductivity, d
 double alpha=((k_conductivity)/(cp_steel*density));
 double X22=0;
 
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt(ThermalA::intpow(a,2)+(12*t*alpha)-(12*t_prime*alpha));
-double erf_denom=2*a*sqrt(alpha)*sqrt(t-t_prime)*sqrt(ThermalA::intpow(a,2)+(12*t*alpha)-(12*t_prime*alpha));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt(ThermalA::intpow(a,2)+(12*t*alpha)-(12*t_prime*alpha));
+double erf_denom=2*a*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt(ThermalA::intpow(a,2)+(12*t*alpha)-(12*t_prime*alpha));
 for(int n=-5;n<=5;n+=1){
 
 
 
-double portion_1=exp(-((3*ThermalA::intpow((-b_g+(2*B*n)+x),2))/(ThermalA::intpow(a,2)+(12*t*alpha)-(12*t_prime*alpha))))*(-ThermalA::erf(((ThermalA::intpow(a,2)*((B*(-1+(2*n)))+x))+(12*(-B+b_g)*t*alpha)+(12*(B-b_g)*alpha*t_prime))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(a,2)*((2*B*n)+x))+(12*b_g*t*alpha)-(12*b_g*t_prime*alpha))/(erf_denom)));
-double portion_2=exp(-(3*ThermalA::intpow((b_g+(2*B*n)+x),2))/(ThermalA::intpow(a,2)+(12*t*alpha)-(12*t_prime*alpha)))*(-ThermalA::erf(((ThermalA::intpow(a,2)*(B+(2*B*n)+x))+(12*(B-b_g)*t*alpha)-(12*(B-b_g)*alpha*t_prime))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(a,2)*((2*B*n)+x))-(12*b_g*t*alpha)+(12*b_g*t_prime*alpha))/(erf_denom)));
-double numerator=a*sqrt(alpha)*sqrt(t-t_prime)*(portion_1+portion_2);
+double portion_1=std::exp(-((3*ThermalA::intpow((-b_g+(2*B*n)+x),2))/(ThermalA::intpow(a,2)+(12*t*alpha)-(12*t_prime*alpha))))*(-ThermalA::erf(((ThermalA::intpow(a,2)*((B*(-1+(2*n)))+x))+(12*(-B+b_g)*t*alpha)+(12*(B-b_g)*alpha*t_prime))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(a,2)*((2*B*n)+x))+(12*b_g*t*alpha)-(12*b_g*t_prime*alpha))/(erf_denom)));
+double portion_2=std::exp(-(3*ThermalA::intpow((b_g+(2*B*n)+x),2))/(ThermalA::intpow(a,2)+(12*t*alpha)-(12*t_prime*alpha)))*(-ThermalA::erf(((ThermalA::intpow(a,2)*(B+(2*B*n)+x))+(12*(B-b_g)*t*alpha)-(12*(B-b_g)*alpha*t_prime))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(a,2)*((2*B*n)+x))-(12*b_g*t*alpha)+(12*b_g*t_prime*alpha))/(erf_denom)));
+double numerator=a*std::sqrt(alpha)*std::sqrt(t-t_prime)*(portion_1+portion_2);
 
 
 double int_X22=numerator/denominator;
@@ -1243,16 +1243,16 @@ double y_DE_part_HS_at_dg_integrated_dg_D(double k_conductivity, double cp_steel
 double alpha=((k_conductivity)/(cp_steel*density));
 double Y22=0;
 
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha));
 
-double erf_denom=2*sqrt(alpha)*sqrt(t-t_prime)*sqrt(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha));
+double erf_denom=2*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha));
 for(int n=-5;n<=5;n+=1){
 
 
 
-double portion_1=exp(-((3*ThermalA::intpow((-d_g+(2*D*n)+y),2))/(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha))))*(ThermalA::erf((b*(d_g-(2*D*n)-y))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(b,2)*((D*(-1+(2*n)))+y))+(12*(d_g-D)*alpha*(t-t_prime)))/(erf_denom*b)));
-double portion_2=exp(-(3*ThermalA::intpow((d_g+(2*D*n)+y),2))/(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha)))*(-ThermalA::erf((b*(d_g+(2*D*n)+y))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(b,2)*(D+(2*D*n)+y))+(12*(D-d_g)*t*alpha)+(12*(d_g-D)*alpha*t_prime))/(erf_denom*b)));
-double numerator=b*sqrt(alpha)*sqrt(t-t_prime)*(-portion_1+portion_2);
+double portion_1=std::exp(-((3*ThermalA::intpow((-d_g+(2*D*n)+y),2))/(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha))))*(ThermalA::erf((b*(d_g-(2*D*n)-y))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(b,2)*((D*(-1+(2*n)))+y))+(12*(d_g-D)*alpha*(t-t_prime)))/(erf_denom*b)));
+double portion_2=std::exp(-(3*ThermalA::intpow((d_g+(2*D*n)+y),2))/(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha)))*(-ThermalA::erf((b*(d_g+(2*D*n)+y))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(b,2)*(D+(2*D*n)+y))+(12*(D-d_g)*t*alpha)+(12*(d_g-D)*alpha*t_prime))/(erf_denom*b)));
+double numerator=b*std::sqrt(alpha)*std::sqrt(t-t_prime)*(-portion_1+portion_2);
 
 double int_Y22=numerator/denominator;
 
@@ -1265,16 +1265,16 @@ double z_DE_part_rear_component(double k_conductivity, double cp_steel, double d
 double alpha=((k_conductivity)/(cp_steel*density));
 double Z22=0;
 
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt(ThermalA::intpow(cr,2)+(12*t*alpha)-(12*t_prime*alpha));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt(ThermalA::intpow(cr,2)+(12*t*alpha)-(12*t_prime*alpha));
 
-double erf_denom=2*sqrt(alpha)*sqrt(t-t_prime)*sqrt(ThermalA::intpow(cr,2)+(12*t*alpha)-(12*t_prime*alpha));
+double erf_denom=2*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt(ThermalA::intpow(cr,2)+(12*t*alpha)-(12*t_prime*alpha));
 for(int n=-5;n<=5;n+=1){
 
 
 
-double portion_1=exp(-((3*ThermalA::intpow(((2*L*n)+z-(v_arc*t_prime)),2))/(ThermalA::intpow(cr,2)+(12*t*alpha)-(12*t_prime*alpha))))*(-ThermalA::erf((cr*((2*L*n)+z-(v_arc*t_prime)))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(cr,2)*((2*L*n)+z))+(12*v_arc*alpha*(t-t_prime)*t_prime))/(erf_denom*cr)));
-double portion_2=exp(-(3*ThermalA::intpow(((2*L*n)+z+(v_arc*t_prime)),2))/(ThermalA::intpow(cr,2)+(12*t*alpha)-(12*t_prime*alpha)))*(ThermalA::erf((cr*((2*L*n)+z+(v_arc*t_prime)))/(erf_denom))-ThermalA::erf(((ThermalA::intpow(cr,2)*((2*L*n)+z))-(12*t*v_arc*alpha*t_prime)+(12*v_arc*alpha*ThermalA::intpow(t_prime,2)))/(erf_denom*cr)));
-double numerator=cr*sqrt(alpha)*sqrt(t-t_prime)*(portion_1+portion_2);
+double portion_1=std::exp(-((3*ThermalA::intpow(((2*L*n)+z-(v_arc*t_prime)),2))/(ThermalA::intpow(cr,2)+(12*t*alpha)-(12*t_prime*alpha))))*(-ThermalA::erf((cr*((2*L*n)+z-(v_arc*t_prime)))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(cr,2)*((2*L*n)+z))+(12*v_arc*alpha*(t-t_prime)*t_prime))/(erf_denom*cr)));
+double portion_2=std::exp(-(3*ThermalA::intpow(((2*L*n)+z+(v_arc*t_prime)),2))/(ThermalA::intpow(cr,2)+(12*t*alpha)-(12*t_prime*alpha)))*(ThermalA::erf((cr*((2*L*n)+z+(v_arc*t_prime)))/(erf_denom))-ThermalA::erf(((ThermalA::intpow(cr,2)*((2*L*n)+z))-(12*t*v_arc*alpha*t_prime)+(12*v_arc*alpha*ThermalA::intpow(t_prime,2)))/(erf_denom*cr)));
+double numerator=cr*std::sqrt(alpha)*std::sqrt(t-t_prime)*(portion_1+portion_2);
 
 
 double int_Z22=numerator/denominator;
@@ -1288,16 +1288,16 @@ double z_DE_part_front_component(double k_conductivity, double cp_steel, double 
 double alpha=((k_conductivity)/(cp_steel*density));
 double Z22=0;
 
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt(ThermalA::intpow(cf,2)+(12*t*alpha)-(12*t_prime*alpha));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt(ThermalA::intpow(cf,2)+(12*t*alpha)-(12*t_prime*alpha));
 
-double erf_denom=2*sqrt(alpha)*sqrt(t-t_prime)*sqrt(ThermalA::intpow(cf,2)+(12*t*alpha)-(12*t_prime*alpha));
+double erf_denom=2*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt(ThermalA::intpow(cf,2)+(12*t*alpha)-(12*t_prime*alpha));
 for(int n=-5;n<=5;n+=1){
 
 
 
-double portion_1=exp(-((3*ThermalA::intpow(((2*L*n)+z-(v_arc*t_prime)),2))/(ThermalA::intpow(cf,2)+(12*t*alpha)-(12*t_prime*alpha))))*(ThermalA::erf((cf*((2*L*n)+z-(v_arc*t_prime)))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(cf,2)*(L-(2*L*n)-z))+(12*L*t*alpha)-(12*(L+(t*v_arc))*alpha*t_prime)+(12*v_arc*alpha*ThermalA::intpow(t_prime,2)))/(erf_denom*cf)));
-double portion_2=exp(-(3*ThermalA::intpow(((2*L*n)+z+(v_arc*t_prime)),2))/(ThermalA::intpow(cf,2)+(12*t*alpha)-(12*t_prime*alpha)))*(-ThermalA::erf((cf*((2*L*n)+z+(v_arc*t_prime)))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(cf,2)*(L+(2*L*n)+z))+(12*L*t*alpha)-(12*alpha*t_prime*(L+(t*v_arc)-(v_arc*t_prime))))/(erf_denom*cf)));
-double numerator=cf*sqrt(alpha)*sqrt(t-t_prime)*(portion_1+portion_2);
+double portion_1=std::exp(-((3*ThermalA::intpow(((2*L*n)+z-(v_arc*t_prime)),2))/(ThermalA::intpow(cf,2)+(12*t*alpha)-(12*t_prime*alpha))))*(ThermalA::erf((cf*((2*L*n)+z-(v_arc*t_prime)))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(cf,2)*(L-(2*L*n)-z))+(12*L*t*alpha)-(12*(L+(t*v_arc))*alpha*t_prime)+(12*v_arc*alpha*ThermalA::intpow(t_prime,2)))/(erf_denom*cf)));
+double portion_2=std::exp(-(3*ThermalA::intpow(((2*L*n)+z+(v_arc*t_prime)),2))/(ThermalA::intpow(cf,2)+(12*t*alpha)-(12*t_prime*alpha)))*(-ThermalA::erf((cf*((2*L*n)+z+(v_arc*t_prime)))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(cf,2)*(L+(2*L*n)+z))+(12*L*t*alpha)-(12*alpha*t_prime*(L+(t*v_arc)-(v_arc*t_prime))))/(erf_denom*cf)));
+double numerator=cf*std::sqrt(alpha)*std::sqrt(t-t_prime)*(portion_1+portion_2);
 
 
 double int_Z22=numerator/denominator;
@@ -1312,19 +1312,19 @@ double z_DE_part_rear_Z11(double k_conductivity, double cp_steel, double density
 double alpha=((k_conductivity)/(cp_steel*density));
 double Z11=0;
 
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt(ThermalA::intpow(cr,2)+(12*t*alpha)-(12*t_prime*alpha));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt(ThermalA::intpow(cr,2)+(12*t*alpha)-(12*t_prime*alpha));
 
-double erf_denom=2*sqrt(alpha)*sqrt(t-t_prime)*sqrt(ThermalA::intpow(cr,2)+(12*t*alpha)-(12*t_prime*alpha));
+double erf_denom=2*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt(ThermalA::intpow(cr,2)+(12*t*alpha)-(12*t_prime*alpha));
 for(int n=-5;n<=5;n+=1){
 
 
 
-double portion_1=-exp(-((3*ThermalA::intpow(((2*L*n)+z-(v_arc*t_prime)),2))/(ThermalA::intpow(cr,2)+(12*t*alpha)-(12*t_prime*alpha))))*(ThermalA::erf((cr*((2*L*n)+z-(v_arc*t_prime)))/(erf_denom))
+double portion_1=-std::exp(-((3*ThermalA::intpow(((2*L*n)+z-(v_arc*t_prime)),2))/(ThermalA::intpow(cr,2)+(12*t*alpha)-(12*t_prime*alpha))))*(ThermalA::erf((cr*((2*L*n)+z-(v_arc*t_prime)))/(erf_denom))
         +ThermalA::erf(((-1*ThermalA::intpow(cr,2)*((2*L*n)+z))+(12*v_arc*alpha*(-t+t_prime)*t_prime))/(erf_denom*cr)));
 
-double portion_2=exp(-(3*ThermalA::intpow(((2*L*n)+z+(v_arc*t_prime)),2))/(ThermalA::intpow(cr,2)+(12*t*alpha)-(12*t_prime*alpha)))*(-ThermalA::erf((cr*((2*L*n)+z+(v_arc*t_prime)))/(erf_denom))
+double portion_2=std::exp(-(3*ThermalA::intpow(((2*L*n)+z+(v_arc*t_prime)),2))/(ThermalA::intpow(cr,2)+(12*t*alpha)-(12*t_prime*alpha)))*(-ThermalA::erf((cr*((2*L*n)+z+(v_arc*t_prime)))/(erf_denom))
         +ThermalA::erf(((ThermalA::intpow(cr,2)*((2*L*n)+z))+(12*t_prime*v_arc*alpha*(-t+t_prime)))/(erf_denom*cr)));
-double numerator=cr*sqrt(alpha)*sqrt(t-t_prime)*(portion_1+portion_2);
+double numerator=cr*std::sqrt(alpha)*std::sqrt(t-t_prime)*(portion_1+portion_2);
 
 
 double int_Z11=numerator/denominator;
@@ -1339,18 +1339,18 @@ double z_DE_part_front_Z11(double k_conductivity, double cp_steel, double densit
 double alpha=((k_conductivity)/(cp_steel*density));
 double Z11=0;
 
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt(ThermalA::intpow(cf,2)+(12*t*alpha)-(12*t_prime*alpha));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt(ThermalA::intpow(cf,2)+(12*t*alpha)-(12*t_prime*alpha));
 
-double erf_denom=2*sqrt(alpha)*sqrt(t-t_prime)*sqrt(ThermalA::intpow(cf,2)+(12*t*alpha)-(12*t_prime*alpha));
+double erf_denom=2*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt(ThermalA::intpow(cf,2)+(12*t*alpha)-(12*t_prime*alpha));
 for(int n=-5;n<=5;n+=1){
 
 
 
-double portion_1=exp(-((3*ThermalA::intpow(((2*L*n)+z-(v_arc*t_prime)),2))/(ThermalA::intpow(cf,2)+(12*t*alpha)-(12*t_prime*alpha))))*(ThermalA::erf((cf*((2*L*n)+z-(v_arc*t_prime)))/(erf_denom))
+double portion_1=std::exp(-((3*ThermalA::intpow(((2*L*n)+z-(v_arc*t_prime)),2))/(ThermalA::intpow(cf,2)+(12*t*alpha)-(12*t_prime*alpha))))*(ThermalA::erf((cf*((2*L*n)+z-(v_arc*t_prime)))/(erf_denom))
         +ThermalA::erf(((ThermalA::intpow(cf,2)*(L-(2*L*n)-z))+(12*L*t*alpha)-(12*alpha*t_prime*(L+(t*v_arc)-(v_arc*t_prime))))/(erf_denom*cf)));
-double portion_2=exp(-(3*ThermalA::intpow(((2*L*n)+z+(v_arc*t_prime)),2))/(ThermalA::intpow(cf,2)+(12*t*alpha)-(12*t_prime*alpha)))*(ThermalA::erf((cf*((2*L*n)+z+(v_arc*t_prime)))/(erf_denom))
+double portion_2=std::exp(-(3*ThermalA::intpow(((2*L*n)+z+(v_arc*t_prime)),2))/(ThermalA::intpow(cf,2)+(12*t*alpha)-(12*t_prime*alpha)))*(ThermalA::erf((cf*((2*L*n)+z+(v_arc*t_prime)))/(erf_denom))
         -ThermalA::erf(((ThermalA::intpow(cf,2)*(L+(2*L*n)+z))+(12*L*t*alpha)-(12*alpha*t_prime*(L+(t*v_arc)-(v_arc*t_prime))))/(erf_denom*cf)));
-double numerator=cf*sqrt(alpha)*sqrt(t-t_prime)*(portion_1+portion_2);
+double numerator=cf*std::sqrt(alpha)*std::sqrt(t-t_prime)*(portion_1+portion_2);
 
 
 double int_Z11=numerator/denominator;
@@ -1364,11 +1364,11 @@ return Z11;
 double y_EB_conical_part(double k_conductivity, double cp_steel, double density, double t, double t_prime, double D, double y,double d_g,double y_i){
 double alpha=((k_conductivity)/(cp_steel*density));
 double Y22=0;
-double erf_denom=2*sqrt(alpha)*sqrt(t-t_prime);
+double erf_denom=2*std::sqrt(alpha)*std::sqrt(t-t_prime);
 for(int n=-5;n<=5;n+=1){
 
 
-double int_Y22=(sqrt(alpha)*(ThermalA::erf((d_g-(2*D*n)-y)/erf_denom)+ThermalA::erf((d_g+(2*D*n)+y)/erf_denom)+ThermalA::erf(((2*D*n)+y-y_i)/erf_denom)-ThermalA::erf(((2*D*n)+y+y_i)/erf_denom))*sqrt(t-t_prime))/(2*sqrt(alpha*(t-t_prime)));
+double int_Y22=(std::sqrt(alpha)*(ThermalA::erf((d_g-(2*D*n)-y)/erf_denom)+ThermalA::erf((d_g+(2*D*n)+y)/erf_denom)+ThermalA::erf(((2*D*n)+y-y_i)/erf_denom)-ThermalA::erf(((2*D*n)+y+y_i)/erf_denom))*std::sqrt(t-t_prime))/(2*std::sqrt(alpha*(t-t_prime)));
 Y22=Y22+int_Y22;
 //cout<<Y22<<endl;
 
@@ -1384,13 +1384,13 @@ double L, double b_g, double d_g, double y_i,double t_start_ramp,double t_finish
 double ramp_rate_end,int xBC,int yBC,int zBC){
 
 
-double r_r=(6*b*cr*ThermalA::intpow(eulers,3))/((cr+cf)*((3*b*ThermalA::intpow(eulers,3))+(2*(ThermalA::intpow(eulers,3)-1)*sqrt(3*pi)*(d_g-y_i))));
+double r_r=(6*b*cr*ThermalA::intpow(eulers,3))/((cr+cf)*((3*b*ThermalA::intpow(eulers,3))+(2*(ThermalA::intpow(eulers,3)-1)*std::sqrt(3*pi)*(d_g-y_i))));
 
-double r_f=(6*b*cf*ThermalA::intpow(eulers,3))/((cr+cf)*((3*b*ThermalA::intpow(eulers,3))+(2*(ThermalA::intpow(eulers,3)-1)*sqrt(3*pi)*(d_g-y_i))));
+double r_f=(6*b*cf*ThermalA::intpow(eulers,3))/((cr+cf)*((3*b*ThermalA::intpow(eulers,3))+(2*(ThermalA::intpow(eulers,3)-1)*std::sqrt(3*pi)*(d_g-y_i))));
 
-double rc_r=(4*cr*(ThermalA::intpow(eulers,3)-1)*(d_g-y_i))/((cf+cr)*((-2*d_g)+(ThermalA::intpow(eulers,3)*((2*d_g)+(b*sqrt(3.0/pi))-(2*y_i)))+(2*y_i)));
+double rc_r=(4*cr*(ThermalA::intpow(eulers,3)-1)*(d_g-y_i))/((cf+cr)*((-2*d_g)+(ThermalA::intpow(eulers,3)*((2*d_g)+(b*std::sqrt(3.0/pi))-(2*y_i)))+(2*y_i)));
 
-double rc_f=(4*cf*(ThermalA::intpow(eulers,3)-1)*(d_g-y_i))/((cf+cr)*((-2*d_g)+(ThermalA::intpow(eulers,3)*((2*d_g)+(b*sqrt(3.0/pi))-(2*y_i)))+(2*y_i)));
+double rc_f=(4*cf*(ThermalA::intpow(eulers,3)-1)*(d_g-y_i))/((cf+cr)*((-2*d_g)+(ThermalA::intpow(eulers,3)*((2*d_g)+(b*std::sqrt(3.0/pi))-(2*y_i)))+(2*y_i)));
 
 
 //x_component_convection_at_B_convection_at_0_hs_at_bg(k_conductivity,cp_steel,density,t,t_prime,B,x,a,b_g);
@@ -1488,8 +1488,8 @@ exit(1);
 
 double rear_conical_part=((54.0*ThermalA::intpow(eulers,3)*rc_r)/(ThermalA::intpow(pi,2)*(ThermalA::intpow(eulers,3)-1)*(2*cr*3*a)*(d_g-y_i)))*(x_C*y_C*z_r_C);
 double front_conical_part=((54.0*ThermalA::intpow(eulers,3)*rc_f)/(ThermalA::intpow(pi,2)*(ThermalA::intpow(eulers,3)-1)*(2*cf*3*a)*(d_g-y_i)))*(x_C*y_C*z_f_C);
-double rear_double_ellipsoidal_part=((6.0*sqrt(3.0)*r_r)/(a*cr*b*pi*sqrt(pi)))*(x_DE*y_DE*z_r_DE);
-double front_double_ellipsoidal_part=((6.0*sqrt(3.0)*r_f)/(a*cf*b*pi*sqrt(pi)))*(x_DE*y_DE*z_f_DE);
+double rear_double_ellipsoidal_part=((6.0*std::sqrt(3.0)*r_r)/(a*cr*b*pi*std::sqrt(pi)))*(x_DE*y_DE*z_r_DE);
+double front_double_ellipsoidal_part=((6.0*std::sqrt(3.0)*r_f)/(a*cf*b*pi*std::sqrt(pi)))*(x_DE*y_DE*z_f_DE);
 
 
 //cout<<"rear conical part= "<<rear_conical_part<<"\t"<<"front conical part= "<<front_conical_part<<"\t"<<"rear DE part= "<<rear_double_ellipsoidal_part<<"\t"<<"front DE part= "<<front_double_ellipsoidal_part<<endl;
@@ -1585,8 +1585,8 @@ exit(1);
 //double z_f_DE=z_DE_part_front_Z11(k_conductivity,cp_steel,density,t,t_prime,L,z,v_arc,cf);
 
 
-double rear_part_DE=((6.0*sqrt(3.0)*rr)/(a*b*pi*sqrt(pi)*cr))*(x_DE*y_DE*z_r_DE);
-double front_part_DE=((6.0*sqrt(3.0)*rf)/(a*b*pi*sqrt(pi)*cf))*(x_DE*y_DE*z_f_DE);
+double rear_part_DE=((6.0*std::sqrt(3.0)*rr)/(a*b*pi*std::sqrt(pi)*cr))*(x_DE*y_DE*z_r_DE);
+double front_part_DE=((6.0*std::sqrt(3.0)*rf)/(a*b*pi*std::sqrt(pi)*cf))*(x_DE*y_DE*z_f_DE);
 
 double ramping=power_ramping_function(t_prime,t_start_ramp,t_finish_ramp,ramp_rate_start,ramp_rate_end);
 ////////                    have different ramping rates here
@@ -1745,12 +1745,12 @@ double k_p=0.5907132527;
 double X_22=0;
 
 
-double erf_denom=2*pi*r*sqrt(alpha)*sqrt(t-t_prime)*sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(r,2))+(108*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha));
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(r,2))+(108*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha));
+double erf_denom=2*pi*r*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(r,2))+(108*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(r,2))+(108*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha));
 for(int n=-10;n<=10;n+=1){
 
-double numerator=pi*r*sqrt(alpha)*sqrt(t-t_prime)*((exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow((-b_g+(2*B*n)+x),2))/((ThermalA::intpow(pi,2)*ThermalA::intpow(r,2))+(108*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha))))*(-ThermalA::erf(((ThermalA::intpow(pi*r,2)*((B*(-1+(2*n)))+x))+(108*(-B+b_g)*ThermalA::intpow(k_p,2)*t*alpha)+(108*(B-b_g)*ThermalA::intpow(k_p,2)*t_prime*alpha))/erf_denom)
-+ThermalA::erf(((ThermalA::intpow(pi*r,2)*((2*B*n)+x))+(108*b_g*ThermalA::intpow(k_p,2)*t*alpha)-(108*b_g*ThermalA::intpow(k_p,2)*t_prime*alpha))/erf_denom)))+(exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow((b_g+(2*B*n)+x),2))/((ThermalA::intpow(pi,2)*ThermalA::intpow(r,2))+(108*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha))))*
+double numerator=pi*r*std::sqrt(alpha)*std::sqrt(t-t_prime)*((std::exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow((-b_g+(2*B*n)+x),2))/((ThermalA::intpow(pi,2)*ThermalA::intpow(r,2))+(108*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha))))*(-ThermalA::erf(((ThermalA::intpow(pi*r,2)*((B*(-1+(2*n)))+x))+(108*(-B+b_g)*ThermalA::intpow(k_p,2)*t*alpha)+(108*(B-b_g)*ThermalA::intpow(k_p,2)*t_prime*alpha))/erf_denom)
++ThermalA::erf(((ThermalA::intpow(pi*r,2)*((2*B*n)+x))+(108*b_g*ThermalA::intpow(k_p,2)*t*alpha)-(108*b_g*ThermalA::intpow(k_p,2)*t_prime*alpha))/erf_denom)))+(std::exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow((b_g+(2*B*n)+x),2))/((ThermalA::intpow(pi,2)*ThermalA::intpow(r,2))+(108*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha))))*
 (-ThermalA::erf(((ThermalA::intpow(pi*r,2)*((2*B*n)+x))-(108*b_g*ThermalA::intpow(k_p,2)*t*alpha)+(108*b_g*ThermalA::intpow(k_p,2)*t_prime*alpha))/erf_denom)+ThermalA::erf(((ThermalA::intpow(pi*r,2)*(B+(2*B*n)+x))+(108*(B-b_g)*ThermalA::intpow(k_p,2)*t*alpha)+(108*(-B+b_g)*ThermalA::intpow(k_p,2)*t_prime*alpha))/erf_denom))));
 
 double int_X_22=numerator/denominator;
@@ -1769,12 +1769,12 @@ double k_p=0.5907132527;
 double X_22=0;
 
 
-double erf_denom=2*r*sqrt(alpha)*sqrt(t-t_prime)*sqrt(ThermalA::intpow(r,2)+(12*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha));
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt((ThermalA::intpow(r,2))+(12*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha));
+double erf_denom=2*r*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt(ThermalA::intpow(r,2)+(12*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt((ThermalA::intpow(r,2))+(12*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha));
 for(int n=-10;n<=10;n+=1){
 
-double numerator=r*sqrt(alpha)*sqrt(t-t_prime)*((exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow((-b_g+(2*B*n)+x),2))/((ThermalA::intpow(r,2))+(12*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha))))*(-ThermalA::erf(((ThermalA::intpow(r,2)*((B*(-1+(2*n)))+x))+(12*(-B+b_g)*ThermalA::intpow(k_p,2)*t*alpha)+(12*(B-b_g)*ThermalA::intpow(k_p,2)*t_prime*alpha))/erf_denom)
-+ThermalA::erf(((ThermalA::intpow(r,2)*((2*B*n)+x))+(12*b_g*ThermalA::intpow(k_p,2)*t*alpha)-(12*b_g*ThermalA::intpow(k_p,2)*t_prime*alpha))/erf_denom)))+(exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow((b_g+(2*B*n)+x),2))/((ThermalA::intpow(r,2))+(12*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha))))*
+double numerator=r*std::sqrt(alpha)*std::sqrt(t-t_prime)*((std::exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow((-b_g+(2*B*n)+x),2))/((ThermalA::intpow(r,2))+(12*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha))))*(-ThermalA::erf(((ThermalA::intpow(r,2)*((B*(-1+(2*n)))+x))+(12*(-B+b_g)*ThermalA::intpow(k_p,2)*t*alpha)+(12*(B-b_g)*ThermalA::intpow(k_p,2)*t_prime*alpha))/erf_denom)
++ThermalA::erf(((ThermalA::intpow(r,2)*((2*B*n)+x))+(12*b_g*ThermalA::intpow(k_p,2)*t*alpha)-(12*b_g*ThermalA::intpow(k_p,2)*t_prime*alpha))/erf_denom)))+(std::exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow((b_g+(2*B*n)+x),2))/((ThermalA::intpow(r,2))+(12*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha))))*
 (-ThermalA::erf(((ThermalA::intpow(r,2)*((2*B*n)+x))-(12*b_g*ThermalA::intpow(k_p,2)*t*alpha)+(12*b_g*ThermalA::intpow(k_p,2)*t_prime*alpha))/erf_denom)+ThermalA::erf(((ThermalA::intpow(r,2)*(B+(2*B*n)+x))+(12*(B-b_g)*ThermalA::intpow(k_p,2)*t*alpha)+(12*(-B+b_g)*ThermalA::intpow(k_p,2)*t_prime*alpha))/erf_denom))));
 
 double int_X_22=numerator/denominator;
@@ -1798,14 +1798,14 @@ double k_p=0.5907132527;
 double Z_22=0;
 
 
-double erf_denom=2*pi*r*sqrt(alpha)*sqrt(t-t_prime)*sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(r,2))+(108*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha));
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(r,2))+(108*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha));
+double erf_denom=2*pi*r*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(r,2))+(108*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(r,2))+(108*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha));
 for(int n=-10;n<=10;n+=1){
 
-double first_exponential=exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow((2*L*n)+z-(v_arc*t_prime),2))/(((ThermalA::intpow(pi,2)*ThermalA::intpow(r,2))+(108*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha)))));
-double second_exponential=exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow((2*L*n)+z+(v_arc*t_prime),2))/(((ThermalA::intpow(pi,2)*ThermalA::intpow(r,2))+(108*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha)))));
+double first_exponential=std::exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow((2*L*n)+z-(v_arc*t_prime),2))/(((ThermalA::intpow(pi,2)*ThermalA::intpow(r,2))+(108*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha)))));
+double second_exponential=std::exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow((2*L*n)+z+(v_arc*t_prime),2))/(((ThermalA::intpow(pi,2)*ThermalA::intpow(r,2))+(108*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha)))));
 
-double numerator=pi*r*sqrt(alpha)*sqrt(t-t_prime)*((first_exponential*(ThermalA::erf(((ThermalA::intpow(pi*r,2)*((2*L*n)+z))+(108*ThermalA::intpow(k_p,2)*v_arc*(t-t_prime)*t_prime*alpha))/erf_denom)
+double numerator=pi*r*std::sqrt(alpha)*std::sqrt(t-t_prime)*((first_exponential*(ThermalA::erf(((ThermalA::intpow(pi*r,2)*((2*L*n)+z))+(108*ThermalA::intpow(k_p,2)*v_arc*(t-t_prime)*t_prime*alpha))/erf_denom)
 +ThermalA::erf(((ThermalA::intpow(pi*r,2)*(L-(2*L*n)-z))+(108*L*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha*(L+(v_arc*t)-(v_arc*t_prime))))/erf_denom)))+(second_exponential*
 (-ThermalA::erf(((ThermalA::intpow(pi*r,2)*((2*L*n)+z))+(108*ThermalA::intpow(k_p,2)*v_arc*t_prime*(-t+t_prime)*alpha))/erf_denom)+ThermalA::erf(((ThermalA::intpow(pi*r,2)*(L+(2*L*n)+z))+(108*ThermalA::intpow(k_p,2)*L*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha*(L+(v_arc*t)-(v_arc*t_prime))))/erf_denom))));
 
@@ -1832,15 +1832,15 @@ double k_p=0.5907132527;
 double Z_22=0;
 
 
-double erf_denom=2*r*sqrt(alpha)*sqrt(t-t_prime)*sqrt((ThermalA::intpow(r,2))+(12*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha));
+double erf_denom=2*r*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt((ThermalA::intpow(r,2))+(12*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha));
 
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt((ThermalA::intpow(r,2))+(12*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt((ThermalA::intpow(r,2))+(12*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha));
 for(int n=-10;n<=10;n+=1){
 
-double first_exponential=exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow((2*L*n)+z-(v_arc*t_prime),2))/(((ThermalA::intpow(r,2))+(12*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha)))));
-double second_exponential=exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow((2*L*n)+z+(v_arc*t_prime),2))/(((ThermalA::intpow(r,2))+(12*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha)))));
+double first_exponential=std::exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow((2*L*n)+z-(v_arc*t_prime),2))/(((ThermalA::intpow(r,2))+(12*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha)))));
+double second_exponential=std::exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow((2*L*n)+z+(v_arc*t_prime),2))/(((ThermalA::intpow(r,2))+(12*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha)))));
 
-double numerator=r*sqrt(alpha)*sqrt(t-t_prime)*((first_exponential*(ThermalA::erf(((ThermalA::intpow(r,2)*((2*L*n)+z))+(12*ThermalA::intpow(k_p,2)*v_arc*(t-t_prime)*t_prime*alpha))/erf_denom)
+double numerator=r*std::sqrt(alpha)*std::sqrt(t-t_prime)*((first_exponential*(ThermalA::erf(((ThermalA::intpow(r,2)*((2*L*n)+z))+(12*ThermalA::intpow(k_p,2)*v_arc*(t-t_prime)*t_prime*alpha))/erf_denom)
 +ThermalA::erf(((ThermalA::intpow(r,2)*(L-(2*L*n)-z))+(12*L*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha*(L+(v_arc*t)-(v_arc*t_prime))))/erf_denom)))+(second_exponential*
 (-ThermalA::erf(((ThermalA::intpow(r,2)*((2*L*n)+z))+(12*ThermalA::intpow(k_p,2)*v_arc*t_prime*(-t+t_prime)*alpha))/erf_denom)+ThermalA::erf(((ThermalA::intpow(r,2)*(L+(2*L*n)+z))+(12*ThermalA::intpow(k_p,2)*L*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha*(L+(v_arc*t)-(v_arc*t_prime))))/erf_denom))));
 
@@ -1858,11 +1858,11 @@ double FSW_Heat_Source_y_column_component(double k_conductivity, double cp_steel
 
 double alpha=((k_conductivity)/(cp_steel*density));
 double Y22=0;
-double erf_denom=2*sqrt(alpha)*sqrt(t-t_prime);
+double erf_denom=2*std::sqrt(alpha)*std::sqrt(t-t_prime);
 for(int n=-10;n<=10;n+=1){
 
 
-double int_Y22=(sqrt(alpha)*(ThermalA::erf((d_g-(2*D*n)-y)/erf_denom)+ThermalA::erf((d_g+(2*D*n)+y)/erf_denom)+ThermalA::erf(((2*D*n)+y-y_i)/erf_denom)-ThermalA::erf(((2*D*n)+y+y_i)/erf_denom))*sqrt(t-t_prime))/(2*sqrt(alpha*(t-t_prime)));
+double int_Y22=(std::sqrt(alpha)*(ThermalA::erf((d_g-(2*D*n)-y)/erf_denom)+ThermalA::erf((d_g+(2*D*n)+y)/erf_denom)+ThermalA::erf(((2*D*n)+y-y_i)/erf_denom)-ThermalA::erf(((2*D*n)+y+y_i)/erf_denom))*std::sqrt(t-t_prime))/(2*std::sqrt(alpha*(t-t_prime)));
 Y22=Y22+int_Y22;
 //cout<<Y22<<endl;
 
@@ -1881,16 +1881,16 @@ double FSW_Heat_Source_y_doughnut_component(double k_conductivity, double cp_ste
 double alpha=((k_conductivity)/(cp_steel*density));
 double Y22=0;
 
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha));
 
-double erf_denom=2*sqrt(alpha)*sqrt(t-t_prime)*sqrt(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha));
+double erf_denom=2*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha));
 for(int n=-10;n<=10;n+=1){
 
 
 
-double portion_1=exp(-((3*ThermalA::intpow((-d_g+(2*D*n)+y),2))/(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha))))*(ThermalA::erf((b*(d_g-(2*D*n)-y))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(b,2)*((D*(-1+(2*n)))+y))+(12*(d_g-D)*alpha*(t-t_prime)))/(erf_denom*b)));
-double portion_2=exp(-(3*ThermalA::intpow((d_g+(2*D*n)+y),2))/(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha)))*(-ThermalA::erf((b*(d_g+(2*D*n)+y))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(b,2)*(D+(2*D*n)+y))+(12*(D-d_g)*t*alpha)+(12*(d_g-D)*alpha*t_prime))/(erf_denom*b)));
-double numerator=b*sqrt(alpha)*sqrt(t-t_prime)*(-portion_1+portion_2);
+double portion_1=std::exp(-((3*ThermalA::intpow((-d_g+(2*D*n)+y),2))/(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha))))*(ThermalA::erf((b*(d_g-(2*D*n)-y))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(b,2)*((D*(-1+(2*n)))+y))+(12*(d_g-D)*alpha*(t-t_prime)))/(erf_denom*b)));
+double portion_2=std::exp(-(3*ThermalA::intpow((d_g+(2*D*n)+y),2))/(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha)))*(-ThermalA::erf((b*(d_g+(2*D*n)+y))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(b,2)*(D+(2*D*n)+y))+(12*(D-d_g)*t*alpha)+(12*(d_g-D)*alpha*t_prime))/(erf_denom*b)));
+double numerator=b*std::sqrt(alpha)*std::sqrt(t-t_prime)*(-portion_1+portion_2);
 
 double int_Y22=numerator/denominator;
 
@@ -1913,12 +1913,12 @@ double k_p=0.5907132527;
 double X_22=0;
 
 
-double erf_denom=2*pi*a*sqrt(alpha)*sqrt(t-t_prime)*sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(a,2))+(108*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha));
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(a,2))+(108*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha));
+double erf_denom=2*pi*a*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(a,2))+(108*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(a,2))+(108*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha));
 for(int n=-10;n<=10;n+=1){
 
-double numerator=pi*a*sqrt(alpha)*sqrt(t-t_prime)*((exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow((-b_g+(2*B*n)+x),2))/((ThermalA::intpow(pi,2)*ThermalA::intpow(a,2))+(108*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha))))*(-ThermalA::erf(((ThermalA::intpow(pi*a,2)*((B*(-1+(2*n)))+x))+(108*(-B+b_g)*ThermalA::intpow(k_p,2)*t*alpha)+(108*(B-b_g)*ThermalA::intpow(k_p,2)*t_prime*alpha))/erf_denom)
-+ThermalA::erf(((ThermalA::intpow(pi*a,2)*((2*B*n)+x))+(108*b_g*ThermalA::intpow(k_p,2)*t*alpha)-(108*b_g*ThermalA::intpow(k_p,2)*t_prime*alpha))/erf_denom)))+(exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow((b_g+(2*B*n)+x),2))/((ThermalA::intpow(pi,2)*ThermalA::intpow(a,2))+(108*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha))))*
+double numerator=pi*a*std::sqrt(alpha)*std::sqrt(t-t_prime)*((std::exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow((-b_g+(2*B*n)+x),2))/((ThermalA::intpow(pi,2)*ThermalA::intpow(a,2))+(108*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha))))*(-ThermalA::erf(((ThermalA::intpow(pi*a,2)*((B*(-1+(2*n)))+x))+(108*(-B+b_g)*ThermalA::intpow(k_p,2)*t*alpha)+(108*(B-b_g)*ThermalA::intpow(k_p,2)*t_prime*alpha))/erf_denom)
++ThermalA::erf(((ThermalA::intpow(pi*a,2)*((2*B*n)+x))+(108*b_g*ThermalA::intpow(k_p,2)*t*alpha)-(108*b_g*ThermalA::intpow(k_p,2)*t_prime*alpha))/erf_denom)))+(std::exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow((b_g+(2*B*n)+x),2))/((ThermalA::intpow(pi,2)*ThermalA::intpow(a,2))+(108*ThermalA::intpow(k_p,2)*t*alpha)-(108*ThermalA::intpow(k_p,2)*t_prime*alpha))))*
 (-ThermalA::erf(((ThermalA::intpow(pi*a,2)*((2*B*n)+x))-(108*b_g*ThermalA::intpow(k_p,2)*t*alpha)+(108*b_g*ThermalA::intpow(k_p,2)*t_prime*alpha))/erf_denom)+ThermalA::erf(((ThermalA::intpow(pi*a,2)*(B+(2*B*n)+x))+(108*(B-b_g)*ThermalA::intpow(k_p,2)*t*alpha)+(108*(-B+b_g)*ThermalA::intpow(k_p,2)*t_prime*alpha))/erf_denom))));
 
 double int_X_22=numerator/denominator;
@@ -1936,12 +1936,12 @@ double k_p=0.5907132527;
 double X_22=0;
 
 
-double erf_denom=2*a*sqrt(alpha)*sqrt(t-t_prime)*sqrt(ThermalA::intpow(a,2)+(12*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha));
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt((ThermalA::intpow(a,2))+(12*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha));
+double erf_denom=2*a*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt(ThermalA::intpow(a,2)+(12*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt((ThermalA::intpow(a,2))+(12*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha));
 for(int n=-10;n<=10;n+=1){
 
-double numerator=a*sqrt(alpha)*sqrt(t-t_prime)*((exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow((-b_g+(2*B*n)+x),2))/((ThermalA::intpow(a,2))+(12*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha))))*(-ThermalA::erf(((ThermalA::intpow(a,2)*((B*(-1+(2*n)))+x))+(12*(-B+b_g)*ThermalA::intpow(k_p,2)*t*alpha)+(12*(B-b_g)*ThermalA::intpow(k_p,2)*t_prime*alpha))/erf_denom)
-+ThermalA::erf(((ThermalA::intpow(a,2)*((2*B*n)+x))+(12*b_g*ThermalA::intpow(k_p,2)*t*alpha)-(12*b_g*ThermalA::intpow(k_p,2)*t_prime*alpha))/erf_denom)))+(exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow((b_g+(2*B*n)+x),2))/((ThermalA::intpow(a,2))+(12*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha))))*
+double numerator=a*std::sqrt(alpha)*std::sqrt(t-t_prime)*((std::exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow((-b_g+(2*B*n)+x),2))/((ThermalA::intpow(a,2))+(12*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha))))*(-ThermalA::erf(((ThermalA::intpow(a,2)*((B*(-1+(2*n)))+x))+(12*(-B+b_g)*ThermalA::intpow(k_p,2)*t*alpha)+(12*(B-b_g)*ThermalA::intpow(k_p,2)*t_prime*alpha))/erf_denom)
++ThermalA::erf(((ThermalA::intpow(a,2)*((2*B*n)+x))+(12*b_g*ThermalA::intpow(k_p,2)*t*alpha)-(12*b_g*ThermalA::intpow(k_p,2)*t_prime*alpha))/erf_denom)))+(std::exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow((b_g+(2*B*n)+x),2))/((ThermalA::intpow(a,2))+(12*ThermalA::intpow(k_p,2)*t*alpha)-(12*ThermalA::intpow(k_p,2)*t_prime*alpha))))*
 (-ThermalA::erf(((ThermalA::intpow(a,2)*((2*B*n)+x))-(12*b_g*ThermalA::intpow(k_p,2)*t*alpha)+(12*b_g*ThermalA::intpow(k_p,2)*t_prime*alpha))/erf_denom)+ThermalA::erf(((ThermalA::intpow(a,2)*(B+(2*B*n)+x))+(12*(B-b_g)*ThermalA::intpow(k_p,2)*t*alpha)+(12*(-B+b_g)*ThermalA::intpow(k_p,2)*t_prime*alpha))/erf_denom))));
 
 double int_X_22=numerator/denominator;
@@ -1958,14 +1958,14 @@ double k_p=0.5907132527;
 double Z_22=0;
 
 
-double erf_denom=2*sqrt(alpha)*sqrt(t-t_prime)*sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(r_f,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(r_f,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
+double erf_denom=2*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(r_f,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(r_f,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
 for(int n=-10;n<=10;n+=1){
 
-double first_exponential=exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow((2*L*n)+z-(v_arc*t_prime),2))/((ThermalA::intpow(pi,2)*ThermalA::intpow(r_f,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
-double second_exponential=exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow((2*L*n)+z+(v_arc*t_prime),2))/((ThermalA::intpow(pi,2)*ThermalA::intpow(r_f,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
+double first_exponential=std::exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow((2*L*n)+z-(v_arc*t_prime),2))/((ThermalA::intpow(pi,2)*ThermalA::intpow(r_f,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
+double second_exponential=std::exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow((2*L*n)+z+(v_arc*t_prime),2))/((ThermalA::intpow(pi,2)*ThermalA::intpow(r_f,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
 
-double numerator=pi*r_f*sqrt(alpha)*sqrt(t-t_prime)*((first_exponential*(ThermalA::erf((pi*r_f*((2*L*n)+z-(v_arc*t_prime)))/(erf_denom))
+double numerator=pi*r_f*std::sqrt(alpha)*std::sqrt(t-t_prime)*((first_exponential*(ThermalA::erf((pi*r_f*((2*L*n)+z-(v_arc*t_prime)))/(erf_denom))
 +ThermalA::erf(((ThermalA::intpow(pi,2)*ThermalA::intpow(r_f,2)*(L-(2*L*n)-z))+(108*ThermalA::intpow(k_p,2)*L*t*alpha)-(108*ThermalA::intpow(k_p,2)*alpha*t_prime*(L+(v_arc*t)-(v_arc*t_prime))))/(pi*r_f*erf_denom))))+
 (second_exponential*(-ThermalA::erf((pi*r_f*((2*L*n)+z+(v_arc*t_prime)))/(erf_denom))
 +ThermalA::erf(((ThermalA::intpow(pi,2)*ThermalA::intpow(r_f,2)*(L+(2*L*n)+z))+(108*ThermalA::intpow(k_p,2)*L*t*alpha)-(108*ThermalA::intpow(k_p,2)*alpha*t_prime*(L+(v_arc*t)-(v_arc*t_prime))))/(pi*r_f*erf_denom)))));
@@ -1986,14 +1986,14 @@ double k_p=0.5907132527;
 double Z_22=0;
 
 
-double erf_denom=2*sqrt(alpha)*sqrt(t-t_prime)*sqrt(ThermalA::intpow(r_f,2)+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt(ThermalA::intpow(r_f,2)+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
+double erf_denom=2*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt(ThermalA::intpow(r_f,2)+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt(ThermalA::intpow(r_f,2)+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
 for(int n=-10;n<=10;n+=1){
 
-double first_exponential=exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow((2*L*n)+z-(v_arc*t_prime),2))/((ThermalA::intpow(r_f,2))+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
-double second_exponential=exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow((2*L*n)+z+(v_arc*t_prime),2))/((ThermalA::intpow(r_f,2))+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
+double first_exponential=std::exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow((2*L*n)+z-(v_arc*t_prime),2))/((ThermalA::intpow(r_f,2))+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
+double second_exponential=std::exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow((2*L*n)+z+(v_arc*t_prime),2))/((ThermalA::intpow(r_f,2))+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
 
-double numerator=r_f*sqrt(alpha)*sqrt(t-t_prime)*((first_exponential*(ThermalA::erf((r_f*((2*L*n)+z-(v_arc*t_prime)))/(erf_denom))
+double numerator=r_f*std::sqrt(alpha)*std::sqrt(t-t_prime)*((first_exponential*(ThermalA::erf((r_f*((2*L*n)+z-(v_arc*t_prime)))/(erf_denom))
 +ThermalA::erf(((ThermalA::intpow(r_f,2)*(L-(2*L*n)-z))+(12*ThermalA::intpow(k_p,2)*L*t*alpha)-(12*ThermalA::intpow(k_p,2)*alpha*t_prime*(L+(v_arc*t)-(v_arc*t_prime))))/(r_f*erf_denom))))+
 (second_exponential*(-ThermalA::erf((r_f*((2*L*n)+z+(v_arc*t_prime)))/(erf_denom))
 +ThermalA::erf(((ThermalA::intpow(r_f,2)*(L+(2*L*n)+z))+(12*ThermalA::intpow(k_p,2)*L*t*alpha)-(12*ThermalA::intpow(k_p,2)*alpha*t_prime*(L+(v_arc*t)-(v_arc*t_prime))))/(r_f*erf_denom)))));
@@ -2014,14 +2014,14 @@ double k_p=0.5907132527;
 double Z_22=0;
 
 
-double erf_denom=2*sqrt(alpha)*sqrt(t-t_prime)*sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(r_r,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(r_r,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
+double erf_denom=2*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(r_r,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(r_r,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
 for(int n=-10;n<=10;n+=1){
 
-double first_exponential=exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow((2*L*n)+z-(v_arc*t_prime),2))/((ThermalA::intpow(pi,2)*ThermalA::intpow(r_r,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
-double second_exponential=exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow((2*L*n)+z+(v_arc*t_prime),2))/((ThermalA::intpow(pi,2)*ThermalA::intpow(r_r,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
+double first_exponential=std::exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow((2*L*n)+z-(v_arc*t_prime),2))/((ThermalA::intpow(pi,2)*ThermalA::intpow(r_r,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
+double second_exponential=std::exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow((2*L*n)+z+(v_arc*t_prime),2))/((ThermalA::intpow(pi,2)*ThermalA::intpow(r_r,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
 
-double numerator=pi*r_r*sqrt(alpha)*sqrt(t-t_prime)*((first_exponential*(-ThermalA::erf((pi*r_r*((2*L*n)+z-(v_arc*t_prime)))/(erf_denom))
+double numerator=pi*r_r*std::sqrt(alpha)*std::sqrt(t-t_prime)*((first_exponential*(-ThermalA::erf((pi*r_r*((2*L*n)+z-(v_arc*t_prime)))/(erf_denom))
 +ThermalA::erf(((ThermalA::intpow(pi,2)*ThermalA::intpow(r_r,2)*((2*L*n)+z))+(108*ThermalA::intpow(k_p,2)*v_arc*alpha*(t-t_prime)*t_prime))/(pi*r_r*erf_denom))))+
 (second_exponential*(ThermalA::erf((pi*r_r*((2*L*n)+z+(v_arc*t_prime)))/(erf_denom))
 -ThermalA::erf(((ThermalA::intpow(pi,2)*ThermalA::intpow(r_r,2)*((2*L*n)+z))+(108*ThermalA::intpow(k_p,2)*v_arc*alpha*t_prime*(t_prime-t)))/(pi*r_r*erf_denom)))));
@@ -2042,14 +2042,14 @@ double k_p=0.5907132527;
 double Z_22=0;
 
 
-double erf_denom=2*sqrt(alpha)*sqrt(t-t_prime)*sqrt(ThermalA::intpow(r_r,2)+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt(ThermalA::intpow(r_r,2)+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
+double erf_denom=2*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt(ThermalA::intpow(r_r,2)+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt(ThermalA::intpow(r_r,2)+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
 for(int n=-10;n<=10;n+=1){
 
-double first_exponential=exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow((2*L*n)+z-(v_arc*t_prime),2))/((ThermalA::intpow(r_r,2))+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
-double second_exponential=exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow((2*L*n)+z+(v_arc*t_prime),2))/((ThermalA::intpow(r_r,2))+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
+double first_exponential=std::exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow((2*L*n)+z-(v_arc*t_prime),2))/((ThermalA::intpow(r_r,2))+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
+double second_exponential=std::exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow((2*L*n)+z+(v_arc*t_prime),2))/((ThermalA::intpow(r_r,2))+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
 
-double numerator=r_r*sqrt(alpha)*sqrt(t-t_prime)*((first_exponential*(-ThermalA::erf((r_r*((2*L*n)+z-(v_arc*t_prime)))/(erf_denom))
+double numerator=r_r*std::sqrt(alpha)*std::sqrt(t-t_prime)*((first_exponential*(-ThermalA::erf((r_r*((2*L*n)+z-(v_arc*t_prime)))/(erf_denom))
 +ThermalA::erf(((ThermalA::intpow(r_r,2)*((2*L*n)+z))+(12*ThermalA::intpow(k_p,2)*v_arc*alpha*(t-t_prime)*t_prime))/(r_r*erf_denom))))+
 (second_exponential*(ThermalA::erf((r_r*((2*L*n)+z+(v_arc*t_prime)))/(erf_denom))
 -ThermalA::erf(((ThermalA::intpow(r_r,2)*((2*L*n)+z))+(12*ThermalA::intpow(k_p,2)*v_arc*alpha*t_prime*(t_prime-t)))/(r_r*erf_denom)))));
@@ -2067,10 +2067,10 @@ return Z_22;
 double FSW_4Q_Heat_Source_y_column_component(double k_conductivity, double cp_steel, double density, double t, double t_prime, double D, double y,double d_g,double y_i){
 double alpha=((k_conductivity)/(cp_steel*density));
 double Y22=0;
-double erf_denom=2*sqrt(alpha)*sqrt(t-t_prime);
+double erf_denom=2*std::sqrt(alpha)*std::sqrt(t-t_prime);
 for(int n=-10;n<=10;n+=1){
 
-double int_Y22=(sqrt(alpha)*(ThermalA::erf((d_g-(2*D*n)-y)/erf_denom)+ThermalA::erf((d_g+(2*D*n)+y)/erf_denom)+ThermalA::erf(((2*D*n)+y-y_i)/erf_denom)-ThermalA::erf(((2*D*n)+y+y_i)/erf_denom))*sqrt(t-t_prime))/(2*sqrt(alpha*(t-t_prime)));
+double int_Y22=(std::sqrt(alpha)*(ThermalA::erf((d_g-(2*D*n)-y)/erf_denom)+ThermalA::erf((d_g+(2*D*n)+y)/erf_denom)+ThermalA::erf(((2*D*n)+y-y_i)/erf_denom)-ThermalA::erf(((2*D*n)+y+y_i)/erf_denom))*std::sqrt(t-t_prime))/(2*std::sqrt(alpha*(t-t_prime)));
 Y22=Y22+int_Y22;
 //cout<<Y22<<endl;
 
@@ -2080,10 +2080,10 @@ return Y22;
 double FSW_4Q_Heat_Source_y_column_component_insulating_at_0_dirichlet_at_D(double k_conductivity, double cp_steel, double density, double t, double t_prime, double D, double y,double d_g,double y_i){
 double alpha=((k_conductivity)/(cp_steel*density));
 double Y22=0;
-double erf_denom=2*sqrt(alpha)*sqrt(t-t_prime);
+double erf_denom=2*std::sqrt(alpha)*std::sqrt(t-t_prime);
 for(int n=-10;n<=10;n+=1){
 
-double int_Y22=(pow(-1.0,n))*(sqrt(alpha)*(ThermalA::erf((d_g-(2*D*n)-y)/erf_denom)+ThermalA::erf((d_g+(2*D*n)+y)/erf_denom)+ThermalA::erf(((2*D*n)+y-y_i)/erf_denom)-ThermalA::erf(((2*D*n)+y+y_i)/erf_denom))*sqrt(t-t_prime))/(2*sqrt(alpha*(t-t_prime)));
+double int_Y22=(pow(-1.0,n))*(std::sqrt(alpha)*(ThermalA::erf((d_g-(2*D*n)-y)/erf_denom)+ThermalA::erf((d_g+(2*D*n)+y)/erf_denom)+ThermalA::erf(((2*D*n)+y-y_i)/erf_denom)-ThermalA::erf(((2*D*n)+y+y_i)/erf_denom))*std::sqrt(t-t_prime))/(2*std::sqrt(alpha*(t-t_prime)));
 Y22=Y22+int_Y22;
 //cout<<Y22<<endl;
 
@@ -2097,14 +2097,14 @@ double FSW_4Q_Heat_Source_y_doughnut_component(double k_conductivity, double cp_
 double alpha=((k_conductivity)/(cp_steel*density));
 double Y22=0;
 
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha));
 
-double erf_denom=2*sqrt(alpha)*sqrt(t-t_prime)*sqrt(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha));
+double erf_denom=2*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha));
 for(int n=-10;n<=10;n+=1){
 
-double portion_1=exp(-((3*ThermalA::intpow((-d_g+(2*D*n)+y),2))/(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha))))*(ThermalA::erf((b*(d_g-(2*D*n)-y))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(b,2)*((D*(-1+(2*n)))+y))+(12*(d_g-D)*alpha*(t-t_prime)))/(erf_denom*b)));
-double portion_2=exp(-(3*ThermalA::intpow((d_g+(2*D*n)+y),2))/(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha)))*(-ThermalA::erf((b*(d_g+(2*D*n)+y))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(b,2)*(D+(2*D*n)+y))+(12*(D-d_g)*t*alpha)+(12*(d_g-D)*alpha*t_prime))/(erf_denom*b)));
-double numerator=b*sqrt(alpha)*sqrt(t-t_prime)*(-portion_1+portion_2);
+double portion_1=std::exp(-((3*ThermalA::intpow((-d_g+(2*D*n)+y),2))/(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha))))*(ThermalA::erf((b*(d_g-(2*D*n)-y))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(b,2)*((D*(-1+(2*n)))+y))+(12*(d_g-D)*alpha*(t-t_prime)))/(erf_denom*b)));
+double portion_2=std::exp(-(3*ThermalA::intpow((d_g+(2*D*n)+y),2))/(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha)))*(-ThermalA::erf((b*(d_g+(2*D*n)+y))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(b,2)*(D+(2*D*n)+y))+(12*(D-d_g)*t*alpha)+(12*(d_g-D)*alpha*t_prime))/(erf_denom*b)));
+double numerator=b*std::sqrt(alpha)*std::sqrt(t-t_prime)*(-portion_1+portion_2);
 double int_Y22=numerator/denominator;
 Y22=Y22+int_Y22;
 }
@@ -2115,14 +2115,14 @@ double FSW_4Q_Heat_Source_y_doughnut_component_insulating_at_0_dirichlet_at_D(do
 double alpha=((k_conductivity)/(cp_steel*density));
 double Y22=0;
 
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha));
 
-double erf_denom=2*sqrt(alpha)*sqrt(t-t_prime)*sqrt(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha));
+double erf_denom=2*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha));
 for(int n=-10;n<=10;n+=1){
 
-double portion_1=exp(-((3*ThermalA::intpow((-d_g+(2*D*n)+y),2))/(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha))))*(ThermalA::erf((b*(d_g-(2*D*n)-y))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(b,2)*((D*(-1+(2*n)))+y))+(12*(d_g-D)*alpha*(t-t_prime)))/(erf_denom*b)));
-double portion_2=exp(-(3*ThermalA::intpow((d_g+(2*D*n)+y),2))/(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha)))*(-ThermalA::erf((b*(d_g+(2*D*n)+y))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(b,2)*(D+(2*D*n)+y))+(12*(D-d_g)*t*alpha)+(12*(d_g-D)*alpha*t_prime))/(erf_denom*b)));
-double numerator=(pow(-1.0,n))*b*sqrt(alpha)*sqrt(t-t_prime)*(-portion_1+portion_2);
+double portion_1=std::exp(-((3*ThermalA::intpow((-d_g+(2*D*n)+y),2))/(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha))))*(ThermalA::erf((b*(d_g-(2*D*n)-y))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(b,2)*((D*(-1+(2*n)))+y))+(12*(d_g-D)*alpha*(t-t_prime)))/(erf_denom*b)));
+double portion_2=std::exp(-(3*ThermalA::intpow((d_g+(2*D*n)+y),2))/(ThermalA::intpow(b,2)+(12*t*alpha)-(12*t_prime*alpha)))*(-ThermalA::erf((b*(d_g+(2*D*n)+y))/(erf_denom))+ThermalA::erf(((ThermalA::intpow(b,2)*(D+(2*D*n)+y))+(12*(D-d_g)*t*alpha)+(12*(d_g-D)*alpha*t_prime))/(erf_denom*b)));
+double numerator=(pow(-1.0,n))*b*std::sqrt(alpha)*std::sqrt(t-t_prime)*(-portion_1+portion_2);
 double int_Y22=numerator/denominator;
 Y22=Y22+int_Y22;
 }
@@ -2141,7 +2141,7 @@ double k_p=0.5907132527;
 
 ///////////////////SINE
 double power_ramping=ThermalA::power_ramping_function(t_prime,t_start_point_RAMP,t_end_point_RAMP,uprate_RAMP,downrate_RAMP);
-//double power_ramping=0.5+(0.5*sin(2*pi*0.25*t_prime));
+//double power_ramping=0.5+(0.5*std::sin(2*pi*0.25*t_prime));
 /*
 if(t_prime>(L/v_arc)){
 ramping=0;
@@ -2177,13 +2177,13 @@ FSW_4Q_Heat_Source_y_column_component_insulating_at_0_dirichlet_at_D(k_conductiv
 */
 
 
-double const_1=((b*r_f)/((r_f+r_r)*(b+(2*sqrt(3/pi)*(d_g-y_i)))));
-double const_2=((b*r_r)/((r_f+r_r)*(b+(2*sqrt(3/pi)*(d_g-y_i)))));
-double const_3=((6*r_f*(d_g-y_i))/((r_f+r_r)*((6*d_g)+(b*sqrt(3*pi))-(6*y_i))));
-double const_4=((6*r_r*(d_g-y_i))/((r_f+r_r)*((6*d_g)+(b*sqrt(3*pi))-(6*y_i))));
+double const_1=((b*r_f)/((r_f+r_r)*(b+(2*std::sqrt(3/pi)*(d_g-y_i)))));
+double const_2=((b*r_r)/((r_f+r_r)*(b+(2*std::sqrt(3/pi)*(d_g-y_i)))));
+double const_3=((6*r_f*(d_g-y_i))/((r_f+r_r)*((6*d_g)+(b*std::sqrt(3*pi))-(6*y_i))));
+double const_4=((6*r_r*(d_g-y_i))/((r_f+r_r)*((6*d_g)+(b*std::sqrt(3*pi))-(6*y_i))));
 
-double Quad_1_factor=const_1*((108*sqrt(3)*ThermalA::intpow(k_p,2))/(a*b*pi*sqrt(pi)*r_f*(ThermalA::intpow(pi,2)-9)));
-double Quad_2_factor=const_2*((108*sqrt(3)*ThermalA::intpow(k_p,2))/(a*b*pi*sqrt(pi)*r_r*(ThermalA::intpow(pi,2)-9)));
+double Quad_1_factor=const_1*((108*std::sqrt(3)*ThermalA::intpow(k_p,2))/(a*b*pi*std::sqrt(pi)*r_f*(ThermalA::intpow(pi,2)-9)));
+double Quad_2_factor=const_2*((108*std::sqrt(3)*ThermalA::intpow(k_p,2))/(a*b*pi*std::sqrt(pi)*r_r*(ThermalA::intpow(pi,2)-9)));
 double Quad_3_factor=const_3*((54*ThermalA::intpow(k_p,2))/(a*pi*r_f*(d_g-y_i)*(ThermalA::intpow(pi,2)-9)));
 double Quad_4_factor=const_4*((54*ThermalA::intpow(k_p,2))/(a*pi*r_r*(d_g-y_i)*(ThermalA::intpow(pi,2)-9)));
 
@@ -2209,16 +2209,16 @@ double k_p=0.5907132527;
 double Z_22=0;
 
 
-double erf_denom=2*sqrt(alpha)*sqrt(t-t_prime)*sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(r_f,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
+double erf_denom=2*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(r_f,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
 
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(r_f,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(r_f,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
 
 for(int n=-10;n<=10;n+=1){
 
-double first_exponential=-exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow(-l_g+(2*L*n)+z,2))/((ThermalA::intpow(pi,2)*ThermalA::intpow(r_f,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
-double second_exponential=exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow(l_g+(2*L*n)+z,2))/((ThermalA::intpow(pi,2)*ThermalA::intpow(r_f,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
+double first_exponential=-std::exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow(-l_g+(2*L*n)+z,2))/((ThermalA::intpow(pi,2)*ThermalA::intpow(r_f,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
+double second_exponential=std::exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow(l_g+(2*L*n)+z,2))/((ThermalA::intpow(pi,2)*ThermalA::intpow(r_f,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
 
-double numerator=pi*r_f*sqrt(alpha)*sqrt(t-t_prime)*((first_exponential*(ThermalA::erf((pi*r_f*(l_g-(2*L*n)-z))/(erf_denom))
+double numerator=pi*r_f*std::sqrt(alpha)*std::sqrt(t-t_prime)*((first_exponential*(ThermalA::erf((pi*r_f*(l_g-(2*L*n)-z))/(erf_denom))
 +ThermalA::erf(((ThermalA::intpow(pi,2)*ThermalA::intpow(r_f,2)*((L*(-1+(2*n)))+z))+(108*ThermalA::intpow(k_p,2)*(-L+l_g)*t*alpha)+(108*ThermalA::intpow(k_p,2)*(L-l_g)*alpha*t_prime))/(pi*r_f*erf_denom))))+
 (second_exponential*(-ThermalA::erf((pi*r_f*(l_g+(2*L*n)+z))/(erf_denom))
 +ThermalA::erf(((ThermalA::intpow(pi,2)*ThermalA::intpow(r_f,2)*(L+(2+L+n)+z))+(108*ThermalA::intpow(k_p,2)*(L-l_g)*t*alpha)+(108*ThermalA::intpow(k_p,2)*(-L+l_g)*t_prime*alpha))/(pi*r_f*erf_denom)))));
@@ -2239,14 +2239,14 @@ double k_p=0.5907132527;
 double Z_22=0;
 
 
-double erf_denom=2*sqrt(alpha)*sqrt(t-t_prime)*sqrt(ThermalA::intpow(r_f,2)+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt(ThermalA::intpow(r_f,2)+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
+double erf_denom=2*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt(ThermalA::intpow(r_f,2)+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt(ThermalA::intpow(r_f,2)+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
 for(int n=-10;n<=10;n+=1){
 
-double first_exponential=-exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow(-l_g+(2*L*n)+z,2))/((ThermalA::intpow(r_f,2))+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
-double second_exponential=exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow(l_g+(2*L*n)+z,2))/((ThermalA::intpow(r_f,2))+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
+double first_exponential=-std::exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow(-l_g+(2*L*n)+z,2))/((ThermalA::intpow(r_f,2))+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
+double second_exponential=std::exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow(l_g+(2*L*n)+z,2))/((ThermalA::intpow(r_f,2))+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
 
-double numerator=r_f*sqrt(alpha)*sqrt(t-t_prime)*((first_exponential*(ThermalA::erf((r_f*(l_g-(2*L*n)-z))/(erf_denom))
+double numerator=r_f*std::sqrt(alpha)*std::sqrt(t-t_prime)*((first_exponential*(ThermalA::erf((r_f*(l_g-(2*L*n)-z))/(erf_denom))
 +ThermalA::erf(((ThermalA::intpow(r_f,2)*((L*(-1+(2*n)))+z))+(12*ThermalA::intpow(k_p,2)*(-L+l_g)*t*alpha)+(12*ThermalA::intpow(k_p,2)*(L-l_g)*t_prime*alpha))/(r_f*erf_denom))))+
 (second_exponential*(-ThermalA::erf((r_f*(l_g+(2*L*n)+z))/(erf_denom))
 +ThermalA::erf(((ThermalA::intpow(r_f,2)*(L+(2*L*n)+z))+(12*ThermalA::intpow(k_p,2)*(L-l_g)*t*alpha)+(12*ThermalA::intpow(k_p,2)*(-L+l_g)*t_prime*alpha))/(r_f*erf_denom)))));
@@ -2267,14 +2267,14 @@ double k_p=0.5907132527;
 double Z_22=0;
 
 
-double erf_denom=2*sqrt(alpha)*sqrt(t-t_prime)*sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(r_r,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(r_r,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
+double erf_denom=2*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(r_r,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt((ThermalA::intpow(pi,2)*ThermalA::intpow(r_r,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
 for(int n=-10;n<=10;n+=1){
 
-double first_exponential=exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow(-l_g+(2*L*n)+z,2))/((ThermalA::intpow(pi,2)*ThermalA::intpow(r_r,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
-double second_exponential=exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow(l_g+(2*L*n)+z,2))/((ThermalA::intpow(pi,2)*ThermalA::intpow(r_r,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
+double first_exponential=std::exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow(-l_g+(2*L*n)+z,2))/((ThermalA::intpow(pi,2)*ThermalA::intpow(r_r,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
+double second_exponential=std::exp(-((27*ThermalA::intpow(k_p,2)*ThermalA::intpow(l_g+(2*L*n)+z,2))/((ThermalA::intpow(pi,2)*ThermalA::intpow(r_r,2))+(108*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
 
-double numerator=pi*r_r*sqrt(alpha)*sqrt(t-t_prime)*((first_exponential*(ThermalA::erf((pi*r_r*(l_g-(2*L*n)-z))/(erf_denom))
+double numerator=pi*r_r*std::sqrt(alpha)*std::sqrt(t-t_prime)*((first_exponential*(ThermalA::erf((pi*r_r*(l_g-(2*L*n)-z))/(erf_denom))
 +ThermalA::erf(((ThermalA::intpow(pi,2)*ThermalA::intpow(r_r,2)*((2*L*n)+z))+(108*ThermalA::intpow(k_p,2)*l_g*alpha*(t-t_prime)))/(pi*r_r*erf_denom))))+
 (second_exponential*(ThermalA::erf((pi*r_r*(l_g+(2*L*n)+z))/(erf_denom))
 -ThermalA::erf(((ThermalA::intpow(pi,2)*ThermalA::intpow(r_r,2)*((2*L*n)+z))-(108*ThermalA::intpow(k_p,2)*l_g*alpha*t)+(108*ThermalA::intpow(k_p,2)*l_g*alpha*t_prime))/(pi*r_r*erf_denom)))));
@@ -2295,14 +2295,14 @@ double k_p=0.5907132527;
 double Z_22=0;
 
 
-double erf_denom=2*sqrt(alpha)*sqrt(t-t_prime)*sqrt(ThermalA::intpow(r_r,2)+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
-double denominator=2*sqrt(alpha*(t-t_prime))*sqrt(ThermalA::intpow(r_r,2)+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
+double erf_denom=2*std::sqrt(alpha)*std::sqrt(t-t_prime)*std::sqrt(ThermalA::intpow(r_r,2)+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
+double denominator=2*std::sqrt(alpha*(t-t_prime))*std::sqrt(ThermalA::intpow(r_r,2)+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)));
 for(int n=-10;n<=10;n+=1){
 
-double first_exponential=exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow(-l_g+(2*L*n)+z,2))/((ThermalA::intpow(r_r,2))+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
-double second_exponential=exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow(l_g+(2*L*n)+z,2))/((ThermalA::intpow(r_r,2))+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
+double first_exponential=std::exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow(-l_g+(2*L*n)+z,2))/((ThermalA::intpow(r_r,2))+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
+double second_exponential=std::exp(-((3*ThermalA::intpow(k_p,2)*ThermalA::intpow(l_g+(2*L*n)+z,2))/((ThermalA::intpow(r_r,2))+(12*ThermalA::intpow(k_p,2)*alpha*(t-t_prime)))));
 
-double numerator=r_r*sqrt(alpha)*sqrt(t-t_prime)*((first_exponential*(ThermalA::erf((r_r*(l_g-(2*L*n)-z))/(erf_denom))
+double numerator=r_r*std::sqrt(alpha)*std::sqrt(t-t_prime)*((first_exponential*(ThermalA::erf((r_r*(l_g-(2*L*n)-z))/(erf_denom))
 +ThermalA::erf(((ThermalA::intpow(r_r,2)*2*L*n)+(ThermalA::intpow(r_r,2)*z)+(12*ThermalA::intpow(k_p,2)*l_g*alpha*(t-t_prime)))/(r_r*erf_denom))))+
 (second_exponential*(ThermalA::erf((r_r*(l_g+(2*L*n)+z))/(erf_denom))
 -ThermalA::erf(((ThermalA::intpow(r_r,2)*2*L*n)+(ThermalA::intpow(r_r,2)*z)-(12*ThermalA::intpow(k_p,2)*l_g*alpha*t)+(12*ThermalA::intpow(k_p,2)*l_g*alpha*t_prime))/(r_r*erf_denom)))));
@@ -2352,13 +2352,13 @@ double Y_Column=ThermalA::FSW_4Q_Heat_Source_y_column_component(k_conductivity,c
 
 
 
-double const_1=((b*r_f)/((r_f+r_r)*(b+(2*sqrt(3/pi)*(d_g-y_i)))));
-double const_2=((b*r_r)/((r_f+r_r)*(b+(2*sqrt(3/pi)*(d_g-y_i)))));
-double const_3=((6*r_f*(d_g-y_i))/((r_f+r_r)*((6*d_g)+(b*sqrt(3*pi))-(6*y_i))));
-double const_4=((6*r_r*(d_g-y_i))/((r_f+r_r)*((6*d_g)+(b*sqrt(3*pi))-(6*y_i))));
+double const_1=((b*r_f)/((r_f+r_r)*(b+(2*std::sqrt(3/pi)*(d_g-y_i)))));
+double const_2=((b*r_r)/((r_f+r_r)*(b+(2*std::sqrt(3/pi)*(d_g-y_i)))));
+double const_3=((6*r_f*(d_g-y_i))/((r_f+r_r)*((6*d_g)+(b*std::sqrt(3*pi))-(6*y_i))));
+double const_4=((6*r_r*(d_g-y_i))/((r_f+r_r)*((6*d_g)+(b*std::sqrt(3*pi))-(6*y_i))));
 
-double Quad_1_factor=const_1*((108*sqrt(3)*ThermalA::intpow(k_p,2))/(a*b*pi*sqrt(pi)*r_f*(ThermalA::intpow(pi,2)-9)));
-double Quad_2_factor=const_2*((108*sqrt(3)*ThermalA::intpow(k_p,2))/(a*b*pi*sqrt(pi)*r_r*(ThermalA::intpow(pi,2)-9)));
+double Quad_1_factor=const_1*((108*std::sqrt(3)*ThermalA::intpow(k_p,2))/(a*b*pi*std::sqrt(pi)*r_f*(ThermalA::intpow(pi,2)-9)));
+double Quad_2_factor=const_2*((108*std::sqrt(3)*ThermalA::intpow(k_p,2))/(a*b*pi*std::sqrt(pi)*r_r*(ThermalA::intpow(pi,2)-9)));
 double Quad_3_factor=const_3*((54*ThermalA::intpow(k_p,2))/(a*pi*r_f*(d_g-y_i)*(ThermalA::intpow(pi,2)-9)));
 double Quad_4_factor=const_4*((54*ThermalA::intpow(k_p,2))/(a*pi*r_r*(d_g-y_i)*(ThermalA::intpow(pi,2)-9)));
 
@@ -2519,7 +2519,7 @@ double k_p=0.5907132527;
 double column_component=((ThermalA::FSW_Heat_Source_Component_x_P_component_insulating(k_conductivity,cp_steel,density,t,t_prime,B,x,r,b_g)*ThermalA::FSW_Heat_Source_Component_z_P_component_insulating(k_conductivity,cp_steel,density,t,t_prime,L,z,r,v_arc))-
 (ThermalA::FSW_Heat_Source_Component_x_NOT_P_component_insulating(k_conductivity,cp_steel,density,t,t_prime,B,x,r,b_g)*ThermalA::FSW_Heat_Source_Component_z_NOT_P_component_insulating(k_conductivity,cp_steel,density,t,t_prime,L,z,r,v_arc)))*(ThermalA::FSW_Heat_Source_y_column_component(k_conductivity,cp_steel,density,t,t_prime,D,y,d_g,y_i));
 
-double TC=1/(1+((27*b*pow(pi,3/2))/(54*pi*(d_g-y_i)*sqrt(3.0))));
+double TC=1/(1+((27*b*pow(pi,3/2))/(54*pi*(d_g-y_i)*std::sqrt(3.0))));
 double BC=1-TC;
 
 double column_component_factor=((27*ThermalA::intpow(k_p,2))/(pi*(ThermalA::intpow(pi,2)-9)*ThermalA::intpow(r,2)*(d_g-y_i)))*(TC);
@@ -2527,7 +2527,7 @@ double column_component_factor=((27*ThermalA::intpow(k_p,2))/(pi*(ThermalA::intp
 double doughnut_component=((ThermalA::FSW_Heat_Source_Component_x_P_component_insulating(k_conductivity,cp_steel,density,t,t_prime,B,x,r,b_g)*ThermalA::FSW_Heat_Source_Component_z_P_component_insulating(k_conductivity,cp_steel,density,t,t_prime,L,z,r,v_arc))-
 (ThermalA::FSW_Heat_Source_Component_x_NOT_P_component_insulating(k_conductivity,cp_steel,density,t,t_prime,B,x,r,b_g)*ThermalA::FSW_Heat_Source_Component_z_NOT_P_component_insulating(k_conductivity,cp_steel,density,t,t_prime,L,z,r,v_arc)))*(ThermalA::FSW_Heat_Source_y_doughnut_component(k_conductivity,cp_steel,density,t,t_prime,D,y,b,d_g));
 
-double doughnut_component_factor=((54*sqrt(3.0)*ThermalA::intpow(k_p,2))/(b*pow(pi,3/2)*(ThermalA::intpow(pi,2)-9)*ThermalA::intpow(r,2)))*(BC);
+double doughnut_component_factor=((54*std::sqrt(3.0)*ThermalA::intpow(k_p,2))/(b*pow(pi,3/2)*(ThermalA::intpow(pi,2)-9)*ThermalA::intpow(r,2)))*(BC);
 
 
 

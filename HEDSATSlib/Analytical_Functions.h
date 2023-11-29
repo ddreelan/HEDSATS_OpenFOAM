@@ -59,6 +59,10 @@ double Temp_Finite_DE(double x,double y,double z,double a,double b,double cr,dou
 double current, double voltage, double eff, double B, double D, double L,double b_g, double d_g,double t_start_ramp,double t_finish_ramp,double ramp_rate_start,double ramp_rate_end,
 int xBC,int yBC,int zBC);
 
+double Temp_Finite_DE_DD(double x,double y,double z,double a,double b,double cr,double cf,double t,double k_conductivity,double density,double cp_steel,double v_arc, double T_0,
+double current, double voltage, double eff, double B, double D, double L,double b_g, double d_g,double t_start_ramp,double t_finish_ramp,double ramp_rate_start,double ramp_rate_end,
+int xBC,int yBC,int zBC);
+
 double Temperature_from_combined_DECbeam_DE_heat_source(double x,double y,double z,double a_DE_in,double b_DE_in,double cr_DE_in,double cf_DE_in,double a_EB_in,double b_EB_in,
 double cr_EB_in,double cf_EB_in,double t,double k_conductivity,double density,double cp_steel,double v_arc, double T_0, double current, double voltage, double eff, double B, double D,
  double L,double b_g, double d_g,double y_i,double portion_of_heat_in_DE,double t_start_ramp,double t_finish_ramp,double ramp_rate_start,double ramp_rate_end,
